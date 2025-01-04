@@ -18,13 +18,11 @@ public class UserController {
     private final SqlSessionFactory factory;
     private final MailService mailService;
 
-    // Constructor
     public UserController() {
         this.factory = DatabaseConfig.getSqlSessionFactory();
-        this.mailService = new MailService(); // Initialize MailService
+        this.mailService = new MailService(); 
     }
 
-    // Login method
     public boolean login(String email, String password) {
         try (SqlSession session = factory.openSession()) {
             UserMapper mapper = session.getMapper(UserMapper.class);
@@ -32,21 +30,17 @@ public class UserController {
         }
     }
 
-    // Register method with OTP functionality
     public void register(User user) throws Exception {
         try (SqlSession session = factory.openSession()) {
             UserMapper userMapper = session.getMapper(UserMapper.class);
             OtpMapper otpMapper = session.getMapper(OtpMapper.class);
     
-            // Hash password
             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             user.setPassword(hashedPassword);
             user.setCreatedAt(LocalDateTime.now());
     
-            // Insert user
             userMapper.insert(user);
     
-            // Generate and save OTP
             String otpCode = generateOtp();
             Otp otp = new Otp();
             otp.setEmail(user.getEmail());
@@ -57,14 +51,13 @@ public class UserController {
 
             session.commit();
     
-            // Send OTP via email
             mailService.sendOtpEmail(user.getEmail(), otpCode);
         }
     }
     
     private String generateOtp() {
         Random random = new Random();
-        int otp = 100000 + random.nextInt(900000); // Generate 6 digit OTP
+        int otp = 100000 + random.nextInt(900000); 
         return String.valueOf(otp);
     }
     
@@ -74,7 +67,6 @@ public class UserController {
             OtpMapper otpMapper = session.getMapper(OtpMapper.class);
             UserMapper userMapper = session.getMapper(UserMapper.class);
     
-            // Find active OTP
             Otp otp = otpMapper.findActiveOtpByEmail(email);
             if (otp == null || otp.getExpiresAt().isBefore(LocalDateTime.now())) {
                 return false; 
@@ -84,7 +76,6 @@ public class UserController {
                 otpMapper.updateStatus(otp.getId(), "USED");
                 session.commit();
     
-                // Update user's is_verified to "YES"
                 userMapper.updateVerificationStatus(email, "YES");
                 session.commit();
     
@@ -94,11 +85,7 @@ public class UserController {
             return false;
         }
     }
-    
-    
 
-
-    // Method to find user by email
     public User findUserByEmail(String email) {
         try (SqlSession session = factory.openSession()) {
             UserMapper mapper = session.getMapper(UserMapper.class);
@@ -106,7 +93,6 @@ public class UserController {
         }
     }
 
-    // Method to update user profile
     public void updateProfile(User user) {
         try (SqlSession session = factory.openSession()) {
             UserMapper mapper = session.getMapper(UserMapper.class);
@@ -115,7 +101,6 @@ public class UserController {
         }
     }
 
-    // Method to get all users
     public List<User> getAllUsers() {
         try (SqlSession session = factory.openSession()) {
             UserMapper mapper = session.getMapper(UserMapper.class);
@@ -123,7 +108,6 @@ public class UserController {
         }
     }
 
-    // Method to delete user
     public void deleteUser(int userId) {
         try (SqlSession session = factory.openSession()) {
             UserMapper mapper = session.getMapper(UserMapper.class);

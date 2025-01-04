@@ -14,6 +14,15 @@ public interface CategoryMapper {
     })
     List<Category> getAll();
 
+    @Select("SELECT * FROM categories WHERE name = #{name}")
+    @Results({
+        @Result(property = "id", column = "id"),
+        @Result(property = "name", column = "name"),
+        @Result(property = "description", column = "description"),
+    })
+    Category getCategoryByName(String name);    
+    
+
     @Select("SELECT * FROM categories WHERE id = #{id}")
     @Results({
         @Result(property = "id", column = "id"),
