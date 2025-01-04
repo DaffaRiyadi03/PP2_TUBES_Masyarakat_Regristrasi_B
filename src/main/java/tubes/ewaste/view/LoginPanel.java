@@ -87,7 +87,9 @@ public class LoginPanel extends JPanel {
             try {
                 if (userController.login(email, password)) {
                     User user = userController.findUserByEmail(email);
-                    if (user.getRoleId() == 1) {
+                    if (user.getRoleId() == 2) { // Arahkan ke halaman utama untuk pengguna dengan roleId 2
+                        mainFrame.showHalamanUtama(); // Navigasi ke halaman utama
+                    } else if (user.getRoleId() == 1) {
                         mainFrame.showDashboard(); // Navigasi ke dashboard untuk akun admin
                     } else {
                         JOptionPane.showMessageDialog(this,

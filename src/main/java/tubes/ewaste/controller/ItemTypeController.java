@@ -23,14 +23,13 @@ public class ItemTypeController {
         }
     }
 
-    // Mendapatkan item types berdasatkan Id
+    // Mendapatkan item types berdasarkan Id
     public ItemType getItemTypesById(int id) {
         try (SqlSession session = factory.openSession()) {
             ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
             return mapper.getById(id); // Pastikan `getById` ada di `ItemTypeMapper`
         }
     }
-    
 
     // Mendapatkan item types berdasarkan kategori ID
     public List<ItemType> getItemTypesByCategory(int categoryId) {
@@ -64,6 +63,13 @@ public class ItemTypeController {
             ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
             mapper.delete(itemTypeId);
             session.commit();
+        }
+    }
+
+    public List<ItemType> getByCategoryId(int categoryId) {
+        try (SqlSession session = factory.openSession()) {
+            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            return mapper.getByCategoryId(categoryId); // Ambil item type berdasarkan kategori
         }
     }
 }
