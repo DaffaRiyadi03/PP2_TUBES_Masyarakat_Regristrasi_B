@@ -69,4 +69,11 @@ public class ItemTypeController {
             session.commit();
         }
     }
+
+    public List<ItemType> getByCategoryId(int categoryId) {
+        try (SqlSession session = factory.openSession()) {
+            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            return mapper.getByCategoryId(categoryId); // Ambil item type berdasarkan kategori
+        }
+    }
 }

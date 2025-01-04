@@ -11,6 +11,7 @@ public class MainFrame extends JFrame {
     private DashboardPanel dashboardPanel;
     private OTPPanel otpPanel; // Tambahkan variabel OTPPanel
     private String emailForVerification;
+    private HalamanUtamaPanel halamanUtamaPanel;
 
     public MainFrame() {
         initComponents();
@@ -26,12 +27,14 @@ public class MainFrame extends JFrame {
         registerPanel = new RegisterPanel(this);
         dashboardPanel = new DashboardPanel(this);
         otpPanel = new OTPPanel(this); // Inisialisasi OTPPanel
+        halamanUtamaPanel = new HalamanUtamaPanel(this);
 
         // Add panels to card layout
         mainPanel.add(loginPanel, "LOGIN");
         mainPanel.add(registerPanel, "REGISTER");
         mainPanel.add(dashboardPanel, "DASHBOARD");
         mainPanel.add(otpPanel, "OTP"); // Tambahkan OTPPanel ke mainPanel
+        mainPanel.add(halamanUtamaPanel, "HALAMAN_UTAMA");
 
         // Add main panel to frame
         add(mainPanel);
@@ -72,4 +75,9 @@ public class MainFrame extends JFrame {
     public String getEmailForVerification() {
         return emailForVerification;
     }
+
+    public void showHalamanUtama() {
+        cardLayout.show(mainPanel, "HALAMAN_UTAMA");
+    }
+    
 }
