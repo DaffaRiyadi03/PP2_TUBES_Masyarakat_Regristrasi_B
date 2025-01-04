@@ -52,5 +52,20 @@ public class CategoryController {
             session.commit();
         }
     }
+    public Category getCategoryByName(String categoryName) {
+        try (SqlSession session = factory.openSession()) {
+            CategoryMapper mapper = session.getMapper(CategoryMapper.class);
+            List<Category> allCategories = mapper.getAll(); // Ambil semua kategori dari database
 
+            // Loop untuk mencari kategori berdasarkan nama
+            for (Category category : allCategories) {
+                if (category.getName().equals(categoryName)) {
+                    return category;  // Kategori ditemukan
+                }
+            }
+            return null;  // Kategori tidak ditemukan
+        }
+    }
+
+    
 }

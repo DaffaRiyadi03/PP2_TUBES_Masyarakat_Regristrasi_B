@@ -1,7 +1,5 @@
 package tubes.ewaste.model;
 
-import java.util.Objects;
-
 public class Category {
     private int id;
     private String name;
@@ -34,6 +32,6 @@ public class Category {
     
     @Override
     public String toString() {
-        return name; // This will display the category name in the ComboBox
+        return name; 
     }
 }

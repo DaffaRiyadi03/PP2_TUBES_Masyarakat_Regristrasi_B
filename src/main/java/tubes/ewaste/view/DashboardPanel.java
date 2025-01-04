@@ -2,16 +2,13 @@ package tubes.ewaste.view;
 
 import tubes.ewaste.controller.UserController;
 import tubes.ewaste.controller.CategoryController;
-import tubes.ewaste.controller.ItemTypeController; // Tambahkan ItemTypeController
+import tubes.ewaste.controller.ItemTypeController; 
 import tubes.ewaste.model.User;
 import tubes.ewaste.model.Category;
-import tubes.ewaste.model.ItemType; // Tambahkan model ItemType
-
+import tubes.ewaste.model.ItemType; 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +17,7 @@ public class DashboardPanel extends JPanel {
     private final MainFrame mainFrame;
     private final UserController userController;
     private final CategoryController categoryController;
-    private final ItemTypeController itemTypeController; // Tambahkan ItemTypeController
+    private final ItemTypeController itemTypeController; 
 
     private JTabbedPane tabbedPane;
 
@@ -139,33 +136,28 @@ public class DashboardPanel extends JPanel {
     }
     
     private void loadItemTypes() {
-        // Fetch the latest item types from the database
         List<ItemType> itemTypes = itemTypeController.getAllItemTypes();
-        
-        // Clear existing rows in the table model before adding new data
-        itemTypeTableModel.setRowCount(0);  // This will clear all rows in the table model
-        
-        // List to hold added item types, checking uniqueness based on ID and Name
+    
+        itemTypeTableModel.setRowCount(0);
+    
         Set<String> addedItemTypes = new HashSet<>();
-        
-        // Add new rows based on the fetched data, while avoiding duplicates
+    
         for (ItemType itemType : itemTypes) {
-            String uniqueKey = itemType.getId() + "_" + itemType.getName();  // Create a unique key based on ID and Name
-            
-            // Check if this unique key already exists in the added set
+            String uniqueKey = itemType.getId() + "_" + itemType.getName();  
             if (!addedItemTypes.contains(uniqueKey)) {
-                addedItemTypes.add(uniqueKey);  // Mark this item type as added
-                
-                // Add new row to the table model
+                addedItemTypes.add(uniqueKey); 
+                String categoryName = (itemType.getCategory() != null) ? itemType.getCategory().getName() : "Unknown Category";
+    
                 itemTypeTableModel.addRow(new Object[]{
                     itemType.getId(),
                     itemType.getName(),
-                    itemType.getDescription(),
-                    itemType.getCategory() != null ? itemType.getCategory().getName() : "Unknown Category"
+                    categoryName,
+                    itemType.getDescription()
                 });
             }
         }
     }
+    
 
     private void setupListeners() {
         // User Tab Listeners
@@ -186,8 +178,8 @@ public class DashboardPanel extends JPanel {
                     newCategory.setName(name);
                     newCategory.setDescription(description);
         
-                    categoryController.addCategory(newCategory); // Gunakan metode controller
-                    loadCategories(); // Muat ulang data di tabel
+                    categoryController.addCategory(newCategory); 
+                    loadCategories(); 
                     dialog.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
@@ -215,12 +207,12 @@ public class DashboardPanel extends JPanel {
         
                     if (!newName.isEmpty() && !newDescription.isEmpty()) {
                         Category updatedCategory = new Category();
-                        updatedCategory.setId(categoryId); // Gunakan ID untuk update
+                        updatedCategory.setId(categoryId); 
                         updatedCategory.setName(newName);
                         updatedCategory.setDescription(newDescription);
         
-                        categoryController.updateCategory(updatedCategory); // Gunakan metode controller
-                        loadCategories(); // Muat ulang data di tabel
+                        categoryController.updateCategory(updatedCategory); 
+                        loadCategories(); 
                         dialog.dispose();
                     } else {
                         JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
@@ -235,7 +227,6 @@ public class DashboardPanel extends JPanel {
         
         refreshCategoryButton.addActionListener(e -> loadCategories());            
         deleteCategoryButton.addActionListener(e -> deleteCategory());
-    
 
         // Item Type Tab Listeners
         // Tombol "Add" untuk menambahkan Item Type
@@ -258,8 +249,8 @@ public class DashboardPanel extends JPanel {
                     newItemType.setDescription(description);
                     newItemType.setCategoryId(selectedCategory.getId());
 
-                    itemTypeController.addItemType(newItemType);  // Gunakan metode controller
-                    loadItemTypes();  // Muat ulang data di tabel
+                    itemTypeController.addItemType(newItemType); 
+                    loadItemTypes(); 
                     dialog.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
@@ -275,46 +266,53 @@ public class DashboardPanel extends JPanel {
             if (selectedRow != -1) {
                 int itemTypeId = (int) itemTypeTableModel.getValueAt(selectedRow, 0);
                 String currentName = (String) itemTypeTableModel.getValueAt(selectedRow, 1);
-                String currentDescription = (String) itemTypeTableModel.getValueAt(selectedRow, 2);
-                Category currentCategory = (Category) itemTypeTableModel.getValueAt(selectedRow, 3);
-
-                ItemTypeFormDialog dialog = new ItemTypeFormDialog(
-                    (JFrame) SwingUtilities.getWindowAncestor(this),
-                    itemTypeController,
-                    categoryController,
-                    "Ubah Jenis Item"
-                );
-
-                dialog.setItemTypeName(currentName);
-                dialog.setItemTypeDescription(currentDescription);
-                dialog.setCategoryComboBoxSelectedItem(currentCategory);
-
-                dialog.addSaveButtonListener(event -> {
-                    String newName = dialog.getItemTypeName();
-                    String newDescription = dialog.getItemTypeDescription();
-                    Category selectedCategory = dialog.getSelectedCategory();
-
-                    if (!newName.isEmpty() && !newDescription.isEmpty() && selectedCategory != null) {
-                        ItemType updatedItemType = new ItemType();
-                        updatedItemType.setId(itemTypeId);  // Gunakan ID untuk update
-                        updatedItemType.setName(newName);
-                        updatedItemType.setDescription(newDescription);
-                        updatedItemType.setCategoryId(selectedCategory.getId());
-
-                        itemTypeController.updateItemType(updatedItemType);  // Gunakan metode controller
-                        loadItemTypes();  // Muat ulang data di tabel
-                        dialog.dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
-                    }
-                });
-
-                dialog.setVisible(true);
+                String currentDescription = (String) itemTypeTableModel.getValueAt(selectedRow, 3);
+        
+                String currentCategoryName = (String) itemTypeTableModel.getValueAt(selectedRow, 2);
+                
+                Category currentCategory = categoryController.getCategoryByName(currentCategoryName);
+                
+                if (currentCategory != null) {
+                    ItemTypeFormDialog dialog = new ItemTypeFormDialog(
+                        (JFrame) SwingUtilities.getWindowAncestor(this),
+                        itemTypeController,
+                        categoryController,
+                        "Ubah Jenis Item"
+                    );
+        
+                    dialog.setItemTypeName(currentName);
+                    dialog.setItemTypeDescription(currentDescription);
+                    dialog.setCategoryComboBoxSelectedItem(currentCategory);
+        
+                    dialog.addSaveButtonListener(event -> {
+                        String newName = dialog.getItemTypeName();
+                        String newDescription = dialog.getItemTypeDescription();
+                        Category selectedCategory = dialog.getSelectedCategory();
+        
+                        if (!newName.isEmpty() && !newDescription.isEmpty() && selectedCategory != null) {
+                            ItemType updatedItemType = new ItemType();
+                            updatedItemType.setId(itemTypeId);  
+                            updatedItemType.setName(newName);
+                            updatedItemType.setDescription(newDescription);
+                            updatedItemType.setCategoryId(selectedCategory.getId());
+        
+                            itemTypeController.updateItemType(updatedItemType);
+                            loadItemTypes();
+                            dialog.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
+                        }
+                    });
+        
+                    dialog.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Kategori yang dipilih tidak valid!");
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Silahkan pilih jenis item yang ingin diubah!");
             }
         });
-
+        
         refreshItemTypeButton.addActionListener(e -> loadItemTypes());
         deleteItemTypeButton.addActionListener(e -> deleteItemType());
 
@@ -323,7 +321,7 @@ public class DashboardPanel extends JPanel {
     }
 
     public void loadUsers() {
-        userTableModel.setRowCount(0); // Clear existing data
+        userTableModel.setRowCount(0);
         List<User> users = userController.getAllUsers();
         for (User user : users) {
             userTableModel.addRow(new Object[]{
@@ -336,8 +334,6 @@ public class DashboardPanel extends JPanel {
             });
         }
     }
-    
-    
 
     private void deleteUser() {
         int selectedRow = usersTable.getSelectedRow();

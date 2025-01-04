@@ -37,7 +37,6 @@ public class CategoryFormDialog extends JDialog {
         pack();
         setLocationRelativeTo(parent);
 
-        // Close dialog on cancel
         cancelButton.addActionListener(e -> dispose());
     }
 
