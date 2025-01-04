@@ -14,7 +14,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DashboardPanel extends JPanel {
     private final MainFrame mainFrame;
@@ -164,33 +166,51 @@ public class DashboardPanel extends JPanel {
     }
     
     private void loadItemTypes() {
-        // Clear existing data
-        itemTypeTableModel.setRowCount(0); // Ensure this clears the table
-        
-        // Fetch all item types and add them to the table
+        // Fetch the latest item types from the database
         List<ItemType> itemTypes = itemTypeController.getAllItemTypes();
+        
+        // Clear existing rows in the table model before adding new data
+        itemTypeTableModel.setRowCount(0);  // This will clear all rows in the table model
+        
+        // List to hold added item types, checking uniqueness based on ID and Name
+        Set<String> addedItemTypes = new HashSet<>();
+        
+        // Add new rows based on the fetched data, while avoiding duplicates
         for (ItemType itemType : itemTypes) {
-            // Add new rows
-            itemTypeTableModel.addRow(new Object[]{
-                itemType.getId(),
-                itemType.getName(),
-                itemType.getDescription(),
-                itemType.getCategory() != null ? itemType.getCategory().getName() : "Unknown Category" // Safely display category name
-            });
+            String uniqueKey = itemType.getId() + "_" + itemType.getName();  // Create a unique key based on ID and Name
+            
+            // Check if this unique key already exists in the added set
+            if (!addedItemTypes.contains(uniqueKey)) {
+                addedItemTypes.add(uniqueKey);  // Mark this item type as added
+                
+                // Add new row to the table model
+                itemTypeTableModel.addRow(new Object[]{
+                    itemType.getId(),
+                    itemType.getName(),
+                    itemType.getDescription(),
+                    itemType.getCategory() != null ? itemType.getCategory().getName() : "Unknown Category"
+                });
+            }
         }
     }
     private void loadItems() {
         itemsTableModel.setRowCount(0); // Clear existing data
         List<Item> items = itemController.getAllItems();
-    
-        for (Item item : items) {
-            itemsTableModel.addRow(new Object[]{
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getItemType() != null ? item.getItemType().getName() : "Unknown Type" // Safely display Type name
-            });
+        Set<String> addedItem = new HashSet<>();
+
+        for(Item item : items){
+            String uniqueKey = item.getId() + "_" + item.getName();
+            if(!addedItem.contains(uniqueKey)){
+                addedItem.add(uniqueKey);
+                itemsTableModel.addRow(new Object[]{
+                    item.getId(),
+                    item.getName(),
+                    item.getDescription(),
+                    item.getItemType() != null ? item.getItemType().getName() : "Unknown Type" // Safely display Type name
+                });
+            }
         }
+    
     }
 
     private void setupListeners() {
