@@ -3,7 +3,9 @@ package tubes.ewaste.controller;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import tubes.ewaste.config.DatabaseConfig;
+import tubes.ewaste.mapper.ItemMapper;
 import tubes.ewaste.mapper.ItemTypeMapper;
+import tubes.ewaste.model.Item;
 import tubes.ewaste.model.ItemType;
 
 import java.util.List;
@@ -30,7 +32,6 @@ public class ItemTypeController {
             return mapper.getById(id); // Pastikan `getById` ada di `ItemTypeMapper`
         }
     }
-    
 
     // Mendapatkan item types berdasarkan kategori ID
     public List<ItemType> getItemTypesByCategory(int categoryId) {
@@ -44,11 +45,24 @@ public class ItemTypeController {
     public void addItemType(ItemType itemType) {
         try (SqlSession session = factory.openSession()) {
             ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
-            mapper.insert(itemType);
-            session.commit();
+            
+            // Check if an ItemType with the same name exists in the same category
+            ItemType existingItemType = mapper.getByNameAndCategory(itemType.getName(), itemType.getCategoryId());
+            
+            if (existingItemType == null) {
+                // Proceed with insert
+                mapper.insert(itemType);
+                session.commit();
+                System.out.println("ItemType added and transaction committed.");
+            } else {
+                // Item with the same name already exists in the same category, handle it
+                System.out.println("ItemType with the same name already exists in the selected category.");
+            }
         }
+    
+        getAllItemTypes();  // Reload data to update the table
     }
-
+    
     // Memperbarui item type yang sudah ada
     public void updateItemType(ItemType itemType) {
         try (SqlSession session = factory.openSession()) {
