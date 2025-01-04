@@ -3,9 +3,7 @@ package tubes.ewaste.controller;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import tubes.ewaste.config.DatabaseConfig;
-import tubes.ewaste.mapper.ItemMapper;
 import tubes.ewaste.mapper.ItemTypeMapper;
-import tubes.ewaste.model.Item;
 import tubes.ewaste.model.ItemType;
 
 import java.util.List;
