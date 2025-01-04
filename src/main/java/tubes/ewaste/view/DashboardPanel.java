@@ -2,11 +2,9 @@ package tubes.ewaste.view;
 
 import tubes.ewaste.controller.UserController;
 import tubes.ewaste.controller.CategoryController;
-import tubes.ewaste.controller.ItemController;
 import tubes.ewaste.controller.ItemTypeController; // Tambahkan ItemTypeController
 import tubes.ewaste.model.User;
 import tubes.ewaste.model.Category;
-import tubes.ewaste.model.Item;
 import tubes.ewaste.model.ItemType; // Tambahkan model ItemType
 
 import javax.swing.*;
@@ -22,7 +20,6 @@ public class DashboardPanel extends JPanel {
     private final MainFrame mainFrame;
     private final UserController userController;
     private final CategoryController categoryController;
-    private final ItemController itemController;
     private final ItemTypeController itemTypeController; // Tambahkan ItemTypeController
 
     private JTabbedPane tabbedPane;
@@ -51,14 +48,6 @@ public class DashboardPanel extends JPanel {
     private JButton updateItemTypeButton;
     private JComboBox<Integer> categoryComboBox;
 
-    // Components for Items Tab
-    private JTable itemsTable;
-    private DefaultTableModel itemsTableModel;
-    private JButton refreshItemsButton;
-    private JButton addItemsButton;
-    private JButton deleteItemsButton;
-    private JButton updateItemsButton;
-
     // Logout Button
     private JButton logoutButton;
 
@@ -66,7 +55,6 @@ public class DashboardPanel extends JPanel {
         this.mainFrame = mainFrame;
         this.userController = new UserController();
         this.categoryController = new CategoryController();
-        this.itemController = new ItemController();
         this.itemTypeController = new ItemTypeController(); // Inisialisasi ItemTypeController
 
         initComponents();
@@ -100,15 +88,6 @@ public class DashboardPanel extends JPanel {
         updateItemTypeButton = new JButton("Rubah Jenis Item");
         deleteItemTypeButton = new JButton("Hapus Jenis Item");
 
-        // Item Tab
-        itemsTableModel = new DefaultTableModel(new String[]{"ID", "Nama", "Deskripsi", "Jenis Item"}, 0);
-        itemsTable = new JTable(itemsTableModel);
-        refreshItemsButton = new JButton("Refresh Item");
-        addItemsButton = new JButton("Tambah Item");
-        updateItemsButton = new JButton("Rubah Item");
-        deleteItemsButton = new JButton("Hapus Item");
-
-
         // Logout Button
         logoutButton = new JButton("Logout");
     }
@@ -133,12 +112,6 @@ public class DashboardPanel extends JPanel {
         itemTypePanel.add(new JScrollPane(itemTypeTable), BorderLayout.CENTER);
         itemTypePanel.add(createButtonPanel(refreshItemTypeButton, addItemTypeButton, updateItemTypeButton, deleteItemTypeButton), BorderLayout.SOUTH);
         tabbedPane.addTab("Kelola Jenis Item", itemTypePanel);
-
-        // Items Tab Layout
-        JPanel itemPanel = new JPanel(new BorderLayout());
-        itemPanel.add(new JScrollPane(itemsTable), BorderLayout.CENTER);
-        itemPanel.add(createButtonPanel(refreshItemsButton, addItemsButton, updateItemsButton, deleteItemsButton), BorderLayout.SOUTH);
-        tabbedPane.addTab("Kelola Item", itemPanel);
 
         // Add TabbedPane and Logout Button
         add(tabbedPane, BorderLayout.CENTER);
@@ -192,25 +165,6 @@ public class DashboardPanel extends JPanel {
                 });
             }
         }
-    }
-    private void loadItems() {
-        itemsTableModel.setRowCount(0); // Clear existing data
-        List<Item> items = itemController.getAllItems();
-        Set<String> addedItem = new HashSet<>();
-
-        for(Item item : items){
-            String uniqueKey = item.getId() + "_" + item.getName();
-            if(!addedItem.contains(uniqueKey)){
-                addedItem.add(uniqueKey);
-                itemsTableModel.addRow(new Object[]{
-                    item.getId(),
-                    item.getName(),
-                    item.getDescription(),
-                    item.getItemType() != null ? item.getItemType().getName() : "Unknown Type" // Safely display Type name
-                });
-            }
-        }
-    
     }
 
     private void setupListeners() {
@@ -364,106 +318,6 @@ public class DashboardPanel extends JPanel {
         refreshItemTypeButton.addActionListener(e -> loadItemTypes());
         deleteItemTypeButton.addActionListener(e -> deleteItemType());
 
-        // Item Tab Listeners
-        // Tombol "Add" untuk menambahkan Item
-        addItemsButton.addActionListener(e -> {
-            ItemFormDialog dialog = new ItemFormDialog(
-                (JFrame) SwingUtilities.getWindowAncestor(this),
-                itemController,
-                itemTypeController,
-                "Tambah Item"
-            );
-
-            dialog.addSaveButtonListener(event -> {
-                String name = dialog.getItemName();
-                String description = dialog.getItemDescription();
-                ItemType selectedItemType = dialog.getSelectedItemType();
-
-                if (!name.isEmpty() && !description.isEmpty() && selectedItemType != null) {
-                    Item newItem = new Item();
-                    newItem.setName(name);
-                    newItem.setDescription(description);
-                    newItem.setItemTypeId(selectedItemType.getId());
-
-                    itemController.addItem(newItem); // Gunakan metode controller
-                    loadItems(); // Muat ulang data di tabel
-                    dialog.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
-                }
-            });
-
-            dialog.setVisible(true);
-        });
-
-        // Tombol "Update" untuk memperbarui Item yang dipilih
-        updateItemsButton.addActionListener(e -> {
-            int selectedRow = itemsTable.getSelectedRow();
-            if (selectedRow != -1) {
-                int itemId = (int) itemsTableModel.getValueAt(selectedRow, 0);
-                String currentName = (String) itemsTableModel.getValueAt(selectedRow, 1);
-                String currentDescription = (String) itemsTableModel.getValueAt(selectedRow, 3);
-                ItemType currentItemType = (ItemType) itemsTableModel.getValueAt(selectedRow, 2);
-
-                ItemFormDialog dialog = new ItemFormDialog(
-                    (JFrame) SwingUtilities.getWindowAncestor(this),
-                    itemController,
-                    itemTypeController,
-                    "Ubah Item"
-                );
-
-                dialog.setItemName(currentName);
-                dialog.setItemDescription(currentDescription);
-                dialog.setItemTypeComboBoxSelectedItem(currentItemType);
-
-                dialog.addSaveButtonListener(event -> {
-                    String newName = dialog.getItemName();
-                    String newDescription = dialog.getItemDescription();
-                    ItemType selectedItemType = dialog.getSelectedItemType();
-
-                    if (!newName.isEmpty() && !newDescription.isEmpty() && selectedItemType != null) {
-                        Item updatedItem = new Item();
-                        updatedItem.setId(itemId); // Gunakan ID untuk update
-                        updatedItem.setName(newName);
-                        updatedItem.setDescription(newDescription);
-                        updatedItem.setItemTypeId(selectedItemType.getId());
-
-                        itemController.updateItem(updatedItem); // Gunakan metode controller
-                        loadItems(); // Muat ulang data di tabel
-                        dialog.dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
-                    }
-                });
-
-                dialog.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(this, "Silahkan pilih item yang ingin diubah!");
-            }
-        });
-
-        // Tombol "Refresh" untuk memuat ulang data
-        refreshItemsButton.addActionListener(e -> loadItems());
-
-        // Tombol "Delete" untuk menghapus Item yang dipilih
-        deleteItemsButton.addActionListener(e -> {
-            int selectedRow = itemsTable.getSelectedRow();
-            if (selectedRow != -1) {
-                int itemId = (int) itemsTableModel.getValueAt(selectedRow, 0);
-
-                int confirm = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus item ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) {
-                    itemController.deleteItem(itemId); // Hapus item dari database
-                    loadItems(); // Muat ulang data di tabel
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Silahkan pilih item yang ingin dihapus!");
-            }
-        });
-
-        
-        
-
         // Logout Listener
         logoutButton.addActionListener(e -> mainFrame.showLogin());
     }
@@ -515,17 +369,6 @@ public class DashboardPanel extends JPanel {
             loadItemTypes();
         } else {
             JOptionPane.showMessageDialog(this, "Silahkan pilih jenis item yang ingin dihapus!");
-        }
-    }
-
-    private void deleteItem() {
-        int selectedRow = itemsTable.getSelectedRow();
-        if (selectedRow != -1) {
-            int itemId = (int) itemsTableModel.getValueAt(selectedRow, 0);
-            itemController.deleteItem(itemId);
-            loadItems();
-        } else {
-            JOptionPane.showMessageDialog(this, "Silahkan pilih item yang ingin dihapus!");
         }
     }
 }
