@@ -27,6 +27,7 @@ public class DashboardPanel extends JPanel {
     private JButton refreshUserButton;
     private JButton updateUserButton;
     private JButton deleteUserButton;
+    private JButton changePasswordButton;
 
     // Components for Categories Tab
     private JTable categoriesTable;
@@ -76,6 +77,8 @@ public class DashboardPanel extends JPanel {
         addCategoryButton = new JButton("Tambah Kategori");
         deleteCategoryButton = new JButton("Hapus Kategori");
         updateCategoryButton = new JButton("Rubah Kategori");
+        changePasswordButton = new JButton("Ganti Password"); // Initialize button
+
 
         // Item Types Tab
         itemTypeTableModel = new DefaultTableModel(new String[]{"ID", "Nama Jenis Item", "Kategori", "Deskripsi"}, 0);
@@ -95,7 +98,7 @@ public class DashboardPanel extends JPanel {
         // Users Tab Layout
         JPanel userPanel = new JPanel(new BorderLayout());
         userPanel.add(new JScrollPane(usersTable), BorderLayout.CENTER);
-        userPanel.add(createButtonPanel(refreshUserButton, updateUserButton, deleteUserButton), BorderLayout.SOUTH);
+        userPanel.add(createButtonPanel(refreshUserButton, updateUserButton, deleteUserButton, changePasswordButton), BorderLayout.SOUTH);
         tabbedPane.addTab("Kelola Akun", userPanel);
 
         // Categories Tab Layout
@@ -339,6 +342,9 @@ public class DashboardPanel extends JPanel {
         int selectedRow = usersTable.getSelectedRow();
         if (selectedRow != -1) {
             int userId = (int) userTableModel.getValueAt(selectedRow, 0);
+
+            int confirm = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus akun ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION)
             userController.deleteUser(userId);
             loadUsers();
         } else {

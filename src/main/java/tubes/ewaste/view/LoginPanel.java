@@ -14,6 +14,7 @@ public class LoginPanel extends JPanel {
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton registerButton;
+    private JButton forgotPasswordButton; // Tombol Lupa Password
 
     public LoginPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -29,6 +30,7 @@ public class LoginPanel extends JPanel {
         passwordField = new JPasswordField(20);
         loginButton = new JButton("Login");
         registerButton = new JButton("Register");
+        forgotPasswordButton = new JButton("Lupa Password"); // Inisialisasi tombol
 
         Dimension fieldSize = new Dimension(250, 35);
         emailField.setPreferredSize(fieldSize);
@@ -37,6 +39,7 @@ public class LoginPanel extends JPanel {
         Dimension buttonSize = new Dimension(250, 40);
         loginButton.setPreferredSize(buttonSize);
         registerButton.setPreferredSize(buttonSize);
+        forgotPasswordButton.setPreferredSize(buttonSize); // Set ukuran tombol
     }
 
     private void setupLayout() {
@@ -65,6 +68,8 @@ public class LoginPanel extends JPanel {
         formPanel.add(loginButton, formGbc);
         formPanel.add(Box.createVerticalStrut(10), formGbc);
         formPanel.add(registerButton, formGbc);
+        formPanel.add(Box.createVerticalStrut(10), formGbc);
+        formPanel.add(forgotPasswordButton, formGbc); // Tambahkan tombol ke layout
 
         add(headerPanel, gbc);
         add(Box.createVerticalStrut(30), gbc);
