@@ -38,4 +38,11 @@ public interface UserMapper {
     // Update the verification status of the user
     @Update("UPDATE users SET is_verified = #{status} WHERE email = #{email}")
     void updateVerificationStatus(@Param("email") String email, @Param("status") String status);
+
+    @Select("SELECT * FROM users WHERE id = #{id}")
+    User getUserById(Integer id);
+
+    @Update("UPDATE users SET name = #{name}, address = #{address}, birth_date = #{birthDate}, photo_path = #{photoPath} WHERE id = #{id}")
+    int updateUser(User user);
+
 }

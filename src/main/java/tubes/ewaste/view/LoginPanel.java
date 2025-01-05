@@ -75,7 +75,7 @@ public class LoginPanel extends JPanel {
         loginButton.addActionListener(e -> {
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
-
+    
             if (email.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
                         "Tolong isi semua kolom",
@@ -83,10 +83,12 @@ public class LoginPanel extends JPanel {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+    
             try {
                 if (userController.login(email, password)) {
                     User user = userController.findUserByEmail(email);
+                    mainFrame.setCurrentUserId(user.getId()); // Simpan userId ke MainFrame
+                    
                     if (user.getRoleId() == 2) { // Arahkan ke halaman utama untuk pengguna dengan roleId 2
                         mainFrame.showHalamanUtama(); // Navigasi ke halaman utama
                     } else if (user.getRoleId() == 1) {
@@ -110,7 +112,7 @@ public class LoginPanel extends JPanel {
                         JOptionPane.ERROR_MESSAGE);
             }
         });
-
+    
         registerButton.addActionListener(e -> mainFrame.showRegister());
-    }
+    }    
 }
