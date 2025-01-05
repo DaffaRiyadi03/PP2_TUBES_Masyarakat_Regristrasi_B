@@ -116,4 +116,25 @@ public class UserController {
         }
     }
 
+    public User getUserById(Integer userId) {
+        try (SqlSession session = factory.openSession()) {
+            UserMapper mapper = session.getMapper(UserMapper.class);
+            return mapper.getUserById(userId);
+        }
+    }
+
+    
+    public boolean updateUser(User user) {
+        try (SqlSession session = factory.openSession()) {
+            UserMapper userMapper = session.getMapper(UserMapper.class);
+            int rowsAffected = userMapper.updateUser(user); // Pastikan metode update di UserMapper benar
+            session.commit(); // Commit perubahan jika update berhasil
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // Mengembalikan false jika terjadi error
+        }
+    }
+      
+
 }

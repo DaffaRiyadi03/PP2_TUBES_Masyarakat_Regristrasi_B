@@ -34,17 +34,22 @@ public class HalamanUtamaPanel extends JPanel {
         navbar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton logoutButton = new JButton("Logout");
         JButton profileButton = new JButton("Profil");
+    
+        // Tambahkan ActionListener untuk tombol Profil
+        profileButton.addActionListener(e -> mainFrame.showProfile());
+    
         navbar.add(profileButton);
         navbar.add(logoutButton);
-
+    
         categoryPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-
+    
         itemTypeTableModel = new DefaultTableModel(new String[]{"Nama", "Deskripsi"}, 0);
         itemTypeTable = new JTable(itemTypeTableModel);
-
+    
         // Logout Button ActionListener
         logoutButton.addActionListener(e -> mainFrame.showLogin());
     }
+    
 
     private void setupLayout() {
         setLayout(new BorderLayout());
