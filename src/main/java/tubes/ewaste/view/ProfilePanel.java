@@ -5,6 +5,7 @@ import tubes.ewaste.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.time.LocalDate;
 
 public class ProfilePanel extends JPanel {
@@ -26,7 +27,7 @@ public class ProfilePanel extends JPanel {
         this.mainFrame = mainFrame;
         this.userController = new UserController();
         this.user = userController.getUserById(userId); // Ambil data user berdasarkan ID
-
+  
         initComponents();
         populateFields();
         setupLayout();
@@ -40,7 +41,7 @@ public class ProfilePanel extends JPanel {
         addressField = new JTextField(20);
         birthDateField = new JTextField(20);
 
-        profilePictureLabel = new JLabel("Foto Profil");
+        profilePictureLabel = new JLabel("");
         profilePictureLabel.setHorizontalAlignment(SwingConstants.CENTER);
         profilePictureLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         profilePictureLabel.setPreferredSize(new Dimension(150, 150));
@@ -62,15 +63,35 @@ public class ProfilePanel extends JPanel {
     }
 
     private void populateFields() {
+        
         if (user != null) {
             nameField.setText(user.getName());
             emailField.setText(user.getEmail());
             addressField.setText(user.getAddress() != null ? user.getAddress() : "");
             birthDateField.setText(user.getBirthDate() != null ? user.getBirthDate().toString() : "");
-            // Tambahkan logika untuk menampilkan foto profil jika ada
+            
             if (user.getPhotoPath() != null) {
-                profilePictureLabel.setIcon(new ImageIcon(user.getPhotoPath())); // Asumsikan path adalah path gambar lokal
+                File imgFile = new File(user.getPhotoPath());
+                if (imgFile.exists() && imgFile.isFile()) {
+                    ImageIcon icon = new ImageIcon(user.getPhotoPath());
+                    Image image = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                    profilePictureLabel.setIcon(new ImageIcon(image));
+                } else {
+                    setDefaultImage();
+                }
+            } else {
+                setDefaultImage();
             }
+        }
+    }
+
+    private void setDefaultImage() {
+        try {
+            ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/avatar.png"));
+            Image defaultImage = defaultIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            profilePictureLabel.setIcon(new ImageIcon(defaultImage));
+        } catch (Exception e) {
+            profilePictureLabel.setText("Foto tidak ditemukan");
         }
     }
 
@@ -81,9 +102,11 @@ public class ProfilePanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
         
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        add(backButton);
+        gbc.anchor = GridBagConstraints.WEST;
+        add(backButton, gbc);
         
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+
         add(new JLabel("Nama:"), gbc);
         add(nameField, gbc);
 
@@ -93,7 +116,7 @@ public class ProfilePanel extends JPanel {
         add(new JLabel("Alamat:"), gbc);
         add(addressField, gbc);
 
-        add(new JLabel("Tanggal Lahir (yyyy-MM-dd):"), gbc);
+        add(new JLabel("Tanggal Lahir (YYYY-MM-DD):"), gbc);
         add(birthDateField, gbc);
 
         add(new JLabel("Foto Profil:"), gbc);
@@ -103,7 +126,7 @@ public class ProfilePanel extends JPanel {
         add(Box.createVerticalStrut(20), gbc);
         add(saveButton, gbc);
     }
-
+    
     private void setupListeners() {
         saveButton.addActionListener(e -> {
             String name = nameField.getText();
@@ -112,7 +135,7 @@ public class ProfilePanel extends JPanel {
 
             if (name.isEmpty() || birthDateStr.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                        "Nama dan tanggal lahir harus diisi!",
+                        "Nama atau tanggal lahir harus diisi!",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
@@ -150,7 +173,10 @@ public class ProfilePanel extends JPanel {
             if (result == JFileChooser.APPROVE_OPTION) {
                 String photoPath = fileChooser.getSelectedFile().getAbsolutePath();
                 user.setPhotoPath(photoPath);
-                profilePictureLabel.setIcon(new ImageIcon(photoPath));
+                
+                ImageIcon imageIcon = new ImageIcon(photoPath);
+                Image image = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                profilePictureLabel.setIcon(new ImageIcon(image));
             }
         });
 
