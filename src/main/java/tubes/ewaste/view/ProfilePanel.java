@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDate;
+import java.awt.geom.Ellipse2D;
+import javax.swing.border.EmptyBorder;
 
 public class ProfilePanel extends JPanel {
     private final MainFrame mainFrame;
@@ -18,6 +20,7 @@ public class ProfilePanel extends JPanel {
     private JTextField birthDateField; // Format: yyyy-MM-dd
     private JLabel profilePictureLabel;
     private JButton saveButton;
+    private JButton changePasswordButton;
     private JButton uploadPhotoButton;
     private JButton backButton;
 
@@ -36,46 +39,72 @@ public class ProfilePanel extends JPanel {
 
     private void initComponents() {
         nameField = new JTextField(20);
-        emailField = new JTextField(20);
-        emailField.setEditable(false); // Email tidak bisa diubah
         addressField = new JTextField(20);
         birthDateField = new JTextField(20);
 
-        profilePictureLabel = new JLabel("");
+        profilePictureLabel = new JLabel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (getIcon() != null) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    
+                    int diameter = Math.min(getWidth(), getHeight());
+                    int x = (getWidth() - diameter) / 2;
+                    int y = (getHeight() - diameter) / 2;
+                    
+                    g2.setClip(new Ellipse2D.Float(x, y, diameter, diameter));
+                    super.paintComponent(g2);
+                    g2.dispose();
+                } else {
+                    super.paintComponent(g);
+                }
+            }
+        };
         profilePictureLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        profilePictureLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        profilePictureLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
         profilePictureLabel.setPreferredSize(new Dimension(150, 150));
 
         saveButton = new JButton("Simpan");
-        uploadPhotoButton = new JButton("Unggah Foto");
+        saveButton.setBackground(new Color(98, 0, 238));
+        saveButton.setForeground(Color.WHITE);
+        saveButton.setFocusPainted(false);
+
+        changePasswordButton = new JButton("Ubah Password");
+        changePasswordButton.setBackground(Color.DARK_GRAY);
+        changePasswordButton.setForeground(Color.WHITE);
+        changePasswordButton.setFocusPainted(false);
+
         backButton = new JButton("Kembali");
+        backButton.setFocusPainted(false);
+        backButton.setPreferredSize(new Dimension(80, 30));
+
+        uploadPhotoButton = new JButton("Unggah Foto");
+        uploadPhotoButton.setFocusPainted(false);
+        uploadPhotoButton.setBackground(Color.LIGHT_GRAY);
 
         Dimension fieldSize = new Dimension(250, 35);
         nameField.setPreferredSize(fieldSize);
-        emailField.setPreferredSize(fieldSize);
         addressField.setPreferredSize(fieldSize);
         birthDateField.setPreferredSize(fieldSize);
 
-        Dimension buttonSize = new Dimension(150, 40);
+        Dimension buttonSize = new Dimension(200, 40);
         saveButton.setPreferredSize(buttonSize);
-        uploadPhotoButton.setPreferredSize(buttonSize);
-        backButton.setPreferredSize(buttonSize);
+        changePasswordButton.setPreferredSize(buttonSize);
     }
 
     private void populateFields() {
-        
         if (user != null) {
             nameField.setText(user.getName());
-            emailField.setText(user.getEmail());
             addressField.setText(user.getAddress() != null ? user.getAddress() : "");
             birthDateField.setText(user.getBirthDate() != null ? user.getBirthDate().toString() : "");
-            
+
             if (user.getPhotoPath() != null) {
                 File imgFile = new File(user.getPhotoPath());
                 if (imgFile.exists() && imgFile.isFile()) {
-                    ImageIcon icon = new ImageIcon(user.getPhotoPath());
-                    Image image = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-                    profilePictureLabel.setIcon(new ImageIcon(image));
+                    ImageIcon originalIcon = new ImageIcon(user.getPhotoPath());
+                    Image scaledImage = originalIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+                    profilePictureLabel.setIcon(new ImageIcon(scaledImage));
                 } else {
                     setDefaultImage();
                 }
@@ -88,43 +117,69 @@ public class ProfilePanel extends JPanel {
     private void setDefaultImage() {
         try {
             ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/avatar.png"));
-            Image defaultImage = defaultIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-            profilePictureLabel.setIcon(new ImageIcon(defaultImage));
+            Image scaledImage = defaultIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            profilePictureLabel.setIcon(new ImageIcon(scaledImage));
         } catch (Exception e) {
             profilePictureLabel.setText("Foto tidak ditemukan");
         }
     }
 
     private void setupLayout() {
-        setLayout(new GridBagLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBackground(Color.WHITE);
+
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.add(backButton, BorderLayout.WEST);
+
+        JPanel profilePanel = new JPanel();
+        profilePanel.setBackground(Color.WHITE);
+        profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.Y_AXIS));
+        profilePanel.add(Box.createVerticalStrut(10));
+        profilePanel.add(profilePictureLabel);
+        profilePanel.add(Box.createVerticalStrut(10));
+        profilePanel.add(uploadPhotoButton);
+
+        JPanel formPanel = new JPanel();
+        formPanel.setBackground(Color.WHITE);
+        formPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
-        
-        gbc.anchor = GridBagConstraints.WEST;
-        add(backButton, gbc);
-        
-        gbc.anchor = GridBagConstraints.NORTHWEST;
 
-        add(new JLabel("Nama:"), gbc);
-        add(nameField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(new JLabel("Nama Lengkap:"), gbc);
 
-        add(new JLabel("Email:"), gbc);
-        add(emailField, gbc);
+        gbc.gridx = 1;
+        formPanel.add(nameField, gbc);
 
-        add(new JLabel("Alamat:"), gbc);
-        add(addressField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        formPanel.add(new JLabel("Alamat:"), gbc);
 
-        add(new JLabel("Tanggal Lahir (YYYY-MM-DD):"), gbc);
-        add(birthDateField, gbc);
+        gbc.gridx = 1;
+        formPanel.add(addressField, gbc);
 
-        add(new JLabel("Foto Profil:"), gbc);
-        add(profilePictureLabel, gbc);
-        add(uploadPhotoButton, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        formPanel.add(new JLabel("Tanggal Lahir:"), gbc);
 
-        add(Box.createVerticalStrut(20), gbc);
-        add(saveButton, gbc);
+        gbc.gridx = 1;
+        formPanel.add(birthDateField, gbc);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.add(saveButton);
+        buttonPanel.add(changePasswordButton);
+
+        add(headerPanel);
+        add(Box.createVerticalStrut(10));
+        add(profilePanel);
+        add(Box.createVerticalStrut(10));
+        add(formPanel);
+        add(Box.createVerticalStrut(20));
+        add(buttonPanel);
     }
     
     private void setupListeners() {
@@ -173,16 +228,19 @@ public class ProfilePanel extends JPanel {
             if (result == JFileChooser.APPROVE_OPTION) {
                 String photoPath = fileChooser.getSelectedFile().getAbsolutePath();
                 user.setPhotoPath(photoPath);
-                
+
                 ImageIcon imageIcon = new ImageIcon(photoPath);
                 Image image = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
                 profilePictureLabel.setIcon(new ImageIcon(image));
             }
         });
 
-        backButton.addActionListener(e -> {
-            mainFrame.showHalamanUtama(); // Kembali ke halaman utama setelah tombol back ditekan
+        changePasswordButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this, "Fitur ubah password belum tersedia.", "Info", JOptionPane.INFORMATION_MESSAGE);
         });
-    
+
+        backButton.addActionListener(e -> {
+            mainFrame.showHalamanUtama();
+        });
     }
 }
