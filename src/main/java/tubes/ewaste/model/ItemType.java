@@ -5,6 +5,7 @@ public class ItemType {
     private String name;
     private String description;
     private int categoryId;  // Kategori yang terkait dengan jenis item
+    private String imageUrl; // Tambahkan field imageUrl
     private Category category;  // Jika ingin menampilkan objek kategori secara penuh
 
     // Getters dan setters
@@ -39,6 +40,14 @@ public class ItemType {
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
+
+    public String getImageUrl() { // Tambahkan getter untuk imageUrl
+         return imageUrl;
+     }
+
+     public void setImageUrl(String imageUrl) { // Tambahkan setter untuk imageUrl
+         this.imageUrl = imageUrl;
+     }
 
     public Category getCategory() {
         return category;
