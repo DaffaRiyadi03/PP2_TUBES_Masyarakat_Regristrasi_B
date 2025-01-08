@@ -50,12 +50,6 @@ public interface UserMapper {
     void updateVerificationStatus(@Param("email") String email, @Param("status") String status);
 
     @Select("SELECT * FROM users WHERE id = #{id}")
-    @Results({
-        @Result(property = "email", column = "email"),
-        @Result(property = "roleId", column = "role_id"),
-        @Result(property = "photoPath", column = "photo_path"),
-        @Result(property = "birthDate", column = "birth_date"),
-    })
     User getUserById(Integer id);
 
     @Update("UPDATE users SET name = #{name}, address = #{address}, birth_date = #{birthDate}, photo_path = #{photoPath} WHERE id = #{id}")
