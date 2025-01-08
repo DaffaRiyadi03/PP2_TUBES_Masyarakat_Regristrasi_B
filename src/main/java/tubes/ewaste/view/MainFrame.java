@@ -1,9 +1,5 @@
 package tubes.ewaste.view;
 
-import tubes.ewaste.controller.UserController;
-import tubes.ewaste.model.User;
-import tubes.ewaste.service.UserService;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,7 +10,6 @@ public class MainFrame extends JFrame {
     private RegisterPanel registerPanel;
     private DashboardPanel dashboardPanel;
     private OTPPanel otpPanel; // Tambahkan variabel OTPPanel
-    private ChangePasswordPanel changePasswordPanel; // Add ChangePasswordPanel variable
     private String emailForVerification;
     private HalamanUtamaPanel halamanUtamaPanel;
     private ProfilePanel profilePanel;
