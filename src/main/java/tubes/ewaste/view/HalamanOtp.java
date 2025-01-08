@@ -1,17 +1,17 @@
 package tubes.ewaste.view;
 
-import tubes.ewaste.controller.UserController;
+import tubes.ewaste.controller.ControllerUser;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class OTPPanel extends JPanel {
+public class HalamanOtp extends JPanel {
     private final MainFrame mainFrame;
     private JTextField otpField;
     private JButton submitButton;
     private JButton backButton;
 
-    public OTPPanel(MainFrame mainFrame) {
+    public HalamanOtp(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initComponents();
         setupLayout();
@@ -67,7 +67,7 @@ public class OTPPanel extends JPanel {
             }
 
             try {
-                UserController userController = new UserController();
+                ControllerUser userController = new ControllerUser();
                 String email = mainFrame.getEmailForVerification();
 
                 if (email == null || email.isEmpty()) {

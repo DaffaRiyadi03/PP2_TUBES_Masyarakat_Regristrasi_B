@@ -4,13 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class CategoryFormDialog extends JDialog {
+public class FormDialogKategori extends JDialog {
     private JTextField nameField;
     private JTextArea descriptionField;
     private JButton saveButton;
     private JButton cancelButton;
 
-    public CategoryFormDialog(JFrame parent, String title) {
+    public FormDialogKategori(JFrame parent, String title) {
         super(parent, title, true);
 
         nameField = new JTextField();

@@ -1,43 +1,44 @@
 package tubes.ewaste.mapper;
 
 import org.apache.ibatis.annotations.*;
-import tubes.ewaste.model.Category;
+import tubes.ewaste.model.Kategori;
 
 import java.util.List;
 
-public interface CategoryMapper {
-    @Select("SELECT * FROM categories")
+@Mapper
+public interface MapperKategori {
+    @Select("SELECT * FROM kategori_sampah")
     @Results({
         @Result(property = "id", column = "id"),
         @Result(property = "name", column = "name"),
         @Result(property = "description", column = "description"),
     })
-    List<Category> getAll();
+    List<Kategori> getAll();
 
-    @Select("SELECT * FROM categories WHERE name = #{name}")
+    @Select("SELECT * FROM kategori_sampah WHERE name = #{name}")
     @Results({
         @Result(property = "id", column = "id"),
         @Result(property = "name", column = "name"),
         @Result(property = "description", column = "description"),
     })
-    Category getCategoryByName(String name);    
+    Kategori getCategoryByName(String name);    
     
 
-    @Select("SELECT * FROM categories WHERE id = #{id}")
+    @Select("SELECT * FROM kategori_sampah WHERE id = #{id}")
     @Results({
         @Result(property = "id", column = "id"),
         @Result(property = "name", column = "name"),
         @Result(property = "description", column = "description"),
     })
-    Category getCategoryById(int id);
+    Kategori getCategoryById(int id);
 
-    @Insert("INSERT INTO categories(name, description) VALUES(#{name}, #{description})")
+    @Insert("INSERT INTO kategori_sampah(name, description) VALUES(#{name}, #{description})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    void insert(Category category);
+    void insert(Kategori category);
 
-    @Update("UPDATE categories SET name=#{name}, description=#{description} WHERE id=#{id}")
-    void update(Category category);
+    @Update("UPDATE kategori_sampah SET name=#{name}, description=#{description} WHERE id=#{id}")
+    void update(Kategori category);
 
-    @Delete("DELETE FROM categories WHERE id = #{id}")
+    @Delete("DELETE FROM kategori_sampah WHERE id = #{id}")
     void delete(int id);
 }

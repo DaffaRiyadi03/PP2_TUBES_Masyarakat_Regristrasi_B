@@ -1,6 +1,6 @@
 package tubes.ewaste.view;
 
-import tubes.ewaste.controller.UserController;
+import tubes.ewaste.controller.ControllerUser;
 import tubes.ewaste.model.User;
 
 import javax.swing.*;
@@ -10,9 +10,9 @@ import java.time.LocalDate;
 import java.awt.geom.Ellipse2D;
 import javax.swing.border.EmptyBorder;
 
-public class ProfilePanel extends JPanel {
+public class HalamanProfile extends JPanel {
     private final MainFrame mainFrame;
-    private final UserController userController;
+    private final ControllerUser userController;
 
     private JTextField nameField;
     private JTextField emailField;
@@ -26,9 +26,9 @@ public class ProfilePanel extends JPanel {
 
     private User user;
 
-    public ProfilePanel(MainFrame mainFrame, Integer userId) {
+    public HalamanProfile(MainFrame mainFrame, Integer userId) {
         this.mainFrame = mainFrame;
-        this.userController = new UserController();
+        this.userController = new ControllerUser();
         this.user = userController.getUserById(userId); // Ambil data user berdasarkan ID
   
         initComponents();

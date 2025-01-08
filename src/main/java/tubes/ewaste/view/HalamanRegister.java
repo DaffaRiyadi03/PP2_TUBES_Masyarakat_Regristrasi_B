@@ -1,15 +1,15 @@
 package tubes.ewaste.view;
 
-import tubes.ewaste.controller.UserController;
+import tubes.ewaste.controller.ControllerUser;
 import tubes.ewaste.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class RegisterPanel extends JPanel {
+public class HalamanRegister extends JPanel {
     private final MainFrame mainFrame;
-    private final UserController userController;
+    private final ControllerUser userController;
 
     private JTextField nameField;
     private JTextField emailField;
@@ -20,9 +20,9 @@ public class RegisterPanel extends JPanel {
     private JButton registerButton;
     private JButton backButton;
 
-    public RegisterPanel(MainFrame mainFrame) {
+    public HalamanRegister(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        this.userController = new UserController();
+        this.userController = new ControllerUser();
 
         initComponents();
         setupLayout();

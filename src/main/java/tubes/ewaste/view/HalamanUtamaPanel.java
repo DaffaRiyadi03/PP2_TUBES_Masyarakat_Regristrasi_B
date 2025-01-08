@@ -1,9 +1,9 @@
 package tubes.ewaste.view;
 
-import tubes.ewaste.controller.CategoryController;
-import tubes.ewaste.controller.ItemTypeController;
-import tubes.ewaste.model.Category;
-import tubes.ewaste.model.ItemType;
+import tubes.ewaste.controller.ControllerKategori;
+import tubes.ewaste.controller.ControllerJenisSampah;
+import tubes.ewaste.model.Kategori;
+import tubes.ewaste.model.JenisSampah;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,8 +18,8 @@ import java.util.List;
 public class HalamanUtamaPanel extends JPanel {
 
     private final MainFrame mainFrame;
-    private final CategoryController categoryController;
-    private final ItemTypeController itemTypeController;
+    private final ControllerKategori categoryController;
+    private final ControllerJenisSampah itemTypeController;
 
     private JPanel navbar;
     private JPanel categoryPanel;
@@ -29,8 +29,8 @@ public class HalamanUtamaPanel extends JPanel {
 
     public HalamanUtamaPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        this.categoryController = new CategoryController();
-        this.itemTypeController = new ItemTypeController();
+        this.categoryController = new ControllerKategori();
+        this.itemTypeController = new ControllerJenisSampah();
 
         initComponents();
         setupLayout();
@@ -103,8 +103,8 @@ public class HalamanUtamaPanel extends JPanel {
 
 
     private void loadCategories() {
-        List<Category> categories = categoryController.getAllCategories();
-        for (Category category : categories) {
+        List<Kategori> categories = categoryController.getAllCategories();
+        for (Kategori category : categories) {
             JButton categoryButton = new JButton(category.getName());
             categoryButton.addActionListener(e -> loadItemTypes(category.getId()));
             categoryPanel.add(categoryButton);
@@ -113,14 +113,14 @@ public class HalamanUtamaPanel extends JPanel {
 
      //  loadItemTypes
      private void loadItemTypes(int categoryId) {
-        List<ItemType> itemTypes = itemTypeController.getByCategoryId(categoryId);
+        List<JenisSampah> itemTypes = itemTypeController.getByCategoryId(categoryId);
         itemTypeTableModel.setRowCount(0); // Clear table
         if (itemTypes == null || itemTypes.isEmpty()) {
             imageLabel.setIcon(null);
             imageLabel.setText("No Item in This Category");
         return;
         }
-        for (ItemType itemType : itemTypes) {
+        for (JenisSampah itemType : itemTypes) {
             String imageUrl = itemType.getImageUrl();
             ImageIcon imageIcon = null;
             if (imageUrl != null && !imageUrl.isEmpty()) {

@@ -7,33 +7,33 @@ import java.time.LocalDateTime;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import tubes.ewaste.config.DatabaseConfig;
-import tubes.ewaste.mapper.OtpMapper;
-import tubes.ewaste.mapper.UserMapper;
+import tubes.ewaste.mapper.MapperOtp;
+import tubes.ewaste.mapper.MapperUser;
 import tubes.ewaste.model.Otp;
 import tubes.ewaste.model.User;
 import tubes.ewaste.service.MailService;
 import org.mindrot.jbcrypt.BCrypt;
 
-public class UserController {
+public class ControllerUser {
     private final SqlSessionFactory factory;
     private final MailService mailService;
 
-    public UserController() {
+    public ControllerUser() {
         this.factory = DatabaseConfig.getSqlSessionFactory();
         this.mailService = new MailService(); 
     }
 
     public boolean login(String email, String password) {
         try (SqlSession session = factory.openSession()) {
-            UserMapper mapper = session.getMapper(UserMapper.class);
+            MapperUser mapper = session.getMapper(MapperUser.class);
             return mapper.validateLogin(email, password) > 0;
         }
     }
 
     public void register(User user) throws Exception {
         try (SqlSession session = factory.openSession()) {
-            UserMapper userMapper = session.getMapper(UserMapper.class);
-            OtpMapper otpMapper = session.getMapper(OtpMapper.class);
+            MapperUser userMapper = session.getMapper(MapperUser.class);
+            MapperOtp otpMapper = session.getMapper(MapperOtp.class);
     
             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             user.setPassword(hashedPassword);
@@ -64,8 +64,8 @@ public class UserController {
 
     public boolean verifyOtp(String email, String otpCode) {
         try (SqlSession session = factory.openSession()) {
-            OtpMapper otpMapper = session.getMapper(OtpMapper.class);
-            UserMapper userMapper = session.getMapper(UserMapper.class);
+            MapperOtp otpMapper = session.getMapper(MapperOtp.class);
+            MapperUser userMapper = session.getMapper(MapperUser.class);
     
             Otp otp = otpMapper.findActiveOtpByEmail(email);
             if (otp == null || otp.getExpiresAt().isBefore(LocalDateTime.now())) {
@@ -88,14 +88,14 @@ public class UserController {
 
     public User findUserByEmail(String email) {
         try (SqlSession session = factory.openSession()) {
-            UserMapper mapper = session.getMapper(UserMapper.class);
+            MapperUser mapper = session.getMapper(MapperUser.class);
             return mapper.getByEmail(email);
         }
     }
 
     public void updateProfile(User user) {
         try (SqlSession session = factory.openSession()) {
-            UserMapper mapper = session.getMapper(UserMapper.class);
+            MapperUser mapper = session.getMapper(MapperUser.class);
             mapper.update(user);
             session.commit();
         }
@@ -103,14 +103,14 @@ public class UserController {
 
     public List<User> getAllUsers() {
         try (SqlSession session = factory.openSession()) {
-            UserMapper mapper = session.getMapper(UserMapper.class);
+            MapperUser mapper = session.getMapper(MapperUser.class);
             return mapper.getAll();
         }
     }
 
     public void deleteUser(int userId) {
         try (SqlSession session = factory.openSession()) {
-            UserMapper mapper = session.getMapper(UserMapper.class);
+            MapperUser mapper = session.getMapper(MapperUser.class);
             mapper.delete(userId);
             session.commit();
         }
@@ -118,7 +118,7 @@ public class UserController {
 
     public User getUserById(Integer userId) {
         try (SqlSession session = factory.openSession()) {
-            UserMapper mapper = session.getMapper(UserMapper.class);
+            MapperUser mapper = session.getMapper(MapperUser.class);
             return mapper.getUserById(userId);
         }
     }
@@ -126,7 +126,7 @@ public class UserController {
     
     public boolean updateUser(User user) {
         try (SqlSession session = factory.openSession()) {
-            UserMapper userMapper = session.getMapper(UserMapper.class);
+            MapperUser userMapper = session.getMapper(MapperUser.class);
             int rowsAffected = userMapper.updateUser(user); // Pastikan metode update di UserMapper benar
             session.commit(); // Commit perubahan jika update berhasil
             return rowsAffected > 0;

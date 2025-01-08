@@ -1,23 +1,23 @@
 package tubes.ewaste.view;
 
-import tubes.ewaste.controller.UserController;
+import tubes.ewaste.controller.ControllerUser;
 import tubes.ewaste.model.User;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class LoginPanel extends JPanel {
+public class HalamanLogin extends JPanel {
     private final MainFrame mainFrame;
-    private final UserController userController;
+    private final ControllerUser userController;
 
     private JTextField emailField;
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton registerButton;
 
-    public LoginPanel(MainFrame mainFrame) {
+    public HalamanLogin(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        this.userController = new UserController();
+        this.userController = new ControllerUser();
 
         initComponents();
         setupLayout();

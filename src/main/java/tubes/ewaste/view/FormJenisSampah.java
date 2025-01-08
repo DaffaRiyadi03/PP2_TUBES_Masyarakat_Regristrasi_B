@@ -1,9 +1,9 @@
 package tubes.ewaste.view;
 
-import tubes.ewaste.controller.ItemTypeController;
-import tubes.ewaste.controller.CategoryController;
-import tubes.ewaste.model.ItemType;
-import tubes.ewaste.model.Category;
+import tubes.ewaste.controller.ControllerJenisSampah;
+import tubes.ewaste.controller.ControllerKategori;
+import tubes.ewaste.model.JenisSampah;
+import tubes.ewaste.model.Kategori;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,18 +11,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class ItemTypeFormDialog extends JDialog {
-    private final ItemTypeController itemTypeController;
-    private final CategoryController categoryController;
+public class FormJenisSampah extends JDialog {
+    private final ControllerJenisSampah itemTypeController;
+    private final ControllerKategori categoryController;
 
     private JTextField nameField;
     private JTextArea descriptionField;
-    private JComboBox<Category> categoryComboBox;
+    private JComboBox<Kategori> categoryComboBox;
     private JButton saveButton;
     private JButton cancelButton;
-    private ItemType itemType; 
+    private JenisSampah itemType; 
 
-    public ItemTypeFormDialog(JFrame parent, ItemTypeController itemTypeController, CategoryController categoryController, String title) {
+    public FormJenisSampah(JFrame parent, ControllerJenisSampah itemTypeController, ControllerKategori categoryController, String title) {
         super(parent, title, true);
         this.itemTypeController = itemTypeController;
         this.categoryController = categoryController;
@@ -68,10 +68,10 @@ public class ItemTypeFormDialog extends JDialog {
     }
 
     private void loadCategories() {
-        List<Category> categories = categoryController.getAllCategories(); 
+        List<Kategori> categories = categoryController.getAllCategories(); 
         categoryComboBox.removeAllItems();
         
-        for (Category category : categories) {
+        for (Kategori category : categories) {
             categoryComboBox.addItem(category);
         }
     }    
@@ -80,7 +80,7 @@ public class ItemTypeFormDialog extends JDialog {
     private void saveItemType() {
         String name = nameField.getText();
         String description = descriptionField.getText();
-        Category selectedCategory = (Category) categoryComboBox.getSelectedItem();
+        Kategori selectedCategory = (Kategori) categoryComboBox.getSelectedItem();
         
         if (name.isEmpty() || description.isEmpty() || selectedCategory == null) {
             JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!");
@@ -90,7 +90,7 @@ public class ItemTypeFormDialog extends JDialog {
         System.out.println("Selected Category: " + selectedCategory);
         
         if (itemType == null) {
-            ItemType newItemType = new ItemType();
+            JenisSampah newItemType = new JenisSampah();
             newItemType.setName(name);
             newItemType.setDescription(description);
             newItemType.setCategoryId(selectedCategory.getId());
@@ -105,7 +105,7 @@ public class ItemTypeFormDialog extends JDialog {
         dispose();
     }
     
-    public void setItemType(ItemType itemType) {
+    public void setItemType(JenisSampah itemType) {
         this.itemType = itemType;
         if (itemType != null) {
             nameField.setText(itemType.getName());
@@ -122,8 +122,8 @@ public class ItemTypeFormDialog extends JDialog {
         return descriptionField.getText();
     }
 
-    public Category getSelectedCategory() {
-        return (Category) categoryComboBox.getSelectedItem();
+    public Kategori getSelectedCategory() {
+        return (Kategori) categoryComboBox.getSelectedItem();
     }
     
     public void setItemTypeName(String name) {
@@ -134,7 +134,7 @@ public class ItemTypeFormDialog extends JDialog {
         descriptionField.setText(description);
     }
 
-    public void setCategoryComboBoxSelectedItem(Category category) {
+    public void setCategoryComboBoxSelectedItem(Kategori category) {
         categoryComboBox.setSelectedItem(category);
     }
 
