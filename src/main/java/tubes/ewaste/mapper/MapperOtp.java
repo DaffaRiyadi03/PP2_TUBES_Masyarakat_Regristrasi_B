@@ -3,7 +3,7 @@ package tubes.ewaste.mapper;
 import org.apache.ibatis.annotations.*;
 import tubes.ewaste.model.Otp;
 
-public interface OtpMapper {
+public interface MapperOtp {
     
     // Menyimpan OTP ke dalam database
     @Insert("INSERT INTO otp (email, otp_code, expires_at, status) VALUES (#{email}, #{otpCode}, #{expiresAt}, #{status})")

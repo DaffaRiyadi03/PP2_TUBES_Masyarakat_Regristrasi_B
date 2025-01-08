@@ -3,43 +3,43 @@ package tubes.ewaste.controller;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import tubes.ewaste.config.DatabaseConfig;
-import tubes.ewaste.mapper.CategoryMapper;
-import tubes.ewaste.model.Category;
+import tubes.ewaste.mapper.MapperKategori;
+import tubes.ewaste.model.Kategori;
 
 import java.util.List;
 
-public class CategoryController {
+public class ControllerKategori {
     private final SqlSessionFactory factory;
 
-    public CategoryController() {
+    public ControllerKategori() {
         this.factory = DatabaseConfig.getSqlSessionFactory();
     }
 
-    public List<Category> getAllCategories() {
+    public List<Kategori> getAllCategories() {
         try (SqlSession session = factory.openSession()) {
-            CategoryMapper mapper = session.getMapper(CategoryMapper.class);
+            MapperKategori mapper = session.getMapper(MapperKategori.class);
             return mapper.getAll();
         }
     }
 
-    public Category getCategoryById(int id) {
+    public Kategori getCategoryById(int id) {
         try (SqlSession session = factory.openSession()) {
-            CategoryMapper mapper = session.getMapper(CategoryMapper.class);
+            MapperKategori mapper = session.getMapper(MapperKategori.class);
             return mapper.getCategoryById(id); // Call the mapper method
         }
     }
     
-    public void addCategory(Category category) {
+    public void addCategory(Kategori category) {
         try (SqlSession session = factory.openSession()) {
-            CategoryMapper mapper = session.getMapper(CategoryMapper.class);
+            MapperKategori mapper = session.getMapper(MapperKategori.class);
             mapper.insert(category);
             session.commit();
         }
     }
 
-    public void updateCategory(Category category) {
+    public void updateCategory(Kategori category) {
         try (SqlSession session = factory.openSession()) {
-            CategoryMapper mapper = session.getMapper(CategoryMapper.class);
+            MapperKategori mapper = session.getMapper(MapperKategori.class);
             mapper.update(category);
             session.commit();
         }
@@ -47,18 +47,18 @@ public class CategoryController {
 
     public void deleteCategory(int categoryId) {
         try (SqlSession session = factory.openSession()) {
-            CategoryMapper mapper = session.getMapper(CategoryMapper.class);
+            MapperKategori mapper = session.getMapper(MapperKategori.class);
             mapper.delete(categoryId);
             session.commit();
         }
     }
-    public Category getCategoryByName(String categoryName) {
+    public Kategori getCategoryByName(String categoryName) {
         try (SqlSession session = factory.openSession()) {
-            CategoryMapper mapper = session.getMapper(CategoryMapper.class);
-            List<Category> allCategories = mapper.getAll(); // Ambil semua kategori dari database
+            MapperKategori mapper = session.getMapper(MapperKategori.class);
+            List<Kategori> allCategories = mapper.getAll(); // Ambil semua kategori dari database
 
             // Loop untuk mencari kategori berdasarkan nama
-            for (Category category : allCategories) {
+            for (Kategori category : allCategories) {
                 if (category.getName().equals(categoryName)) {
                     return category;  // Kategori ditemukan
                 }

@@ -6,13 +6,13 @@ import java.awt.*;
 public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;
-    private LoginPanel loginPanel;
-    private RegisterPanel registerPanel;
-    private DashboardPanel dashboardPanel;
-    private OTPPanel otpPanel; // Tambahkan variabel OTPPanel
+    private HalamanLogin loginPanel;
+    private HalamanRegister registerPanel;
+    private DashboardAdmin dashboardPanel;
+    private HalamanOtp otpPanel; // Tambahkan variabel OTPPanel
     private String emailForVerification;
     private HalamanUtamaPanel halamanUtamaPanel;
-    private ProfilePanel profilePanel;
+    private HalamanProfile profilePanel;
     private Integer currentUserId; // Untuk menyimpan user ID yang login
 
 
@@ -26,12 +26,12 @@ public class MainFrame extends JFrame {
         mainPanel = new JPanel(cardLayout);
     
         // Initialize panels
-        loginPanel = new LoginPanel(this);
-        registerPanel = new RegisterPanel(this);
-        dashboardPanel = new DashboardPanel(this);
-        otpPanel = new OTPPanel(this); 
+        loginPanel = new HalamanLogin(this);
+        registerPanel = new HalamanRegister(this);
+        dashboardPanel = new DashboardAdmin(this);
+        otpPanel = new HalamanOtp(this); 
         halamanUtamaPanel = new HalamanUtamaPanel(this);
-        profilePanel = new ProfilePanel(this, currentUserId); // Inisialisasi ProfilePanel
+        profilePanel = new HalamanProfile(this, currentUserId); // Inisialisasi ProfilePanel
     
         // Add panels to card layout
         mainPanel.add(loginPanel, "LOGIN");
@@ -52,7 +52,7 @@ public class MainFrame extends JFrame {
     public void showProfile() {
         // Pastikan userId diambil dari user yang login
         if (currentUserId != null) {
-            profilePanel = new ProfilePanel(this, currentUserId); // Berikan userId saat inisialisasi
+            profilePanel = new HalamanProfile(this, currentUserId); // Berikan userId saat inisialisasi
             mainPanel.add(profilePanel, "PROFILE"); // Tambahkan panel ke mainPanel
             cardLayout.show(mainPanel, "PROFILE"); // Tampilkan ProfilePanel
         } else {

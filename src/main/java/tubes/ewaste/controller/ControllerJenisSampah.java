@@ -3,44 +3,44 @@ package tubes.ewaste.controller;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import tubes.ewaste.config.DatabaseConfig;
-import tubes.ewaste.mapper.ItemTypeMapper;
-import tubes.ewaste.model.ItemType;
+import tubes.ewaste.mapper.MapperJenisSampah;
+import tubes.ewaste.model.JenisSampah;
 
 import java.util.List;
 
-public class ItemTypeController {
+public class ControllerJenisSampah {
     private final SqlSessionFactory factory;
 
-    public ItemTypeController() {
+    public ControllerJenisSampah() {
         this.factory = DatabaseConfig.getSqlSessionFactory();
     }
 
-    public List<ItemType> getAllItemTypes() {
+    public List<JenisSampah> getAllItemTypes() {
         try (SqlSession session = factory.openSession()) {
-            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            MapperJenisSampah mapper = session.getMapper(MapperJenisSampah.class);
             return mapper.getAll();
         }
     }
 
-    public ItemType getItemTypesById(int id) {
+    public JenisSampah getItemTypesById(int id) {
         try (SqlSession session = factory.openSession()) {
-            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            MapperJenisSampah mapper = session.getMapper(MapperJenisSampah.class);
             return mapper.getById(id); 
         }
     }
 
-    public List<ItemType> getItemTypesByCategory(int categoryId) {
+    public List<JenisSampah> getItemTypesByCategory(int categoryId) {
         try (SqlSession session = factory.openSession()) {
-            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            MapperJenisSampah mapper = session.getMapper(MapperJenisSampah.class);
             return mapper.getByCategoryId(categoryId); 
         }
     }
 
-    public void addItemType(ItemType itemType) {
+    public void addItemType(JenisSampah itemType) {
         try (SqlSession session = factory.openSession()) {
-            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            MapperJenisSampah mapper = session.getMapper(MapperJenisSampah.class);
             
-            ItemType existingItemType = mapper.getByNameAndCategory(itemType.getName(), itemType.getCategoryId());
+            JenisSampah existingItemType = mapper.getByNameAndCategory(itemType.getName(), itemType.getCategoryId());
             
             if (existingItemType == null) {
                 mapper.insert(itemType);
@@ -54,9 +54,9 @@ public class ItemTypeController {
         getAllItemTypes(); 
     }
     
-    public void updateItemType(ItemType itemType) {
+    public void updateItemType(JenisSampah itemType) {
         try (SqlSession session = factory.openSession()) {
-            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            MapperJenisSampah mapper = session.getMapper(MapperJenisSampah.class);
             mapper.update(itemType);
             session.commit();
         }
@@ -64,15 +64,15 @@ public class ItemTypeController {
 
     public void deleteItemType(int itemTypeId) {
         try (SqlSession session = factory.openSession()) {
-            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            MapperJenisSampah mapper = session.getMapper(MapperJenisSampah.class);
             mapper.delete(itemTypeId);
             session.commit();
         }
     }
 
-    public List<ItemType> getByCategoryId(int categoryId) {
+    public List<JenisSampah> getByCategoryId(int categoryId) {
         try (SqlSession session = factory.openSession()) {
-            ItemTypeMapper mapper = session.getMapper(ItemTypeMapper.class);
+            MapperJenisSampah mapper = session.getMapper(MapperJenisSampah.class);
             return mapper.getByCategoryId(categoryId); // Ambil item type berdasarkan kategori
         }
     }

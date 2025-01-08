@@ -1,11 +1,11 @@
 package tubes.ewaste.view;
 
-import tubes.ewaste.controller.UserController;
-import tubes.ewaste.controller.CategoryController;
-import tubes.ewaste.controller.ItemTypeController; 
+import tubes.ewaste.controller.ControllerUser;
+import tubes.ewaste.controller.ControllerKategori;
+import tubes.ewaste.controller.ControllerJenisSampah; 
 import tubes.ewaste.model.User;
-import tubes.ewaste.model.Category;
-import tubes.ewaste.model.ItemType; 
+import tubes.ewaste.model.Kategori;
+import tubes.ewaste.model.JenisSampah; 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -13,11 +13,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DashboardPanel extends JPanel {
+public class DashboardAdmin extends JPanel {
     private final MainFrame mainFrame;
-    private final UserController userController;
-    private final CategoryController categoryController;
-    private final ItemTypeController itemTypeController; 
+    private final ControllerUser userController;
+    private final ControllerKategori categoryController;
+    private final ControllerJenisSampah itemTypeController; 
 
     private JTabbedPane tabbedPane;
 
@@ -48,11 +48,11 @@ public class DashboardPanel extends JPanel {
     // Logout Button
     private JButton logoutButton;
 
-    public DashboardPanel(MainFrame mainFrame) {
+    public DashboardAdmin(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        this.userController = new UserController();
-        this.categoryController = new CategoryController();
-        this.itemTypeController = new ItemTypeController(); // Inisialisasi ItemTypeController
+        this.userController = new ControllerUser();
+        this.categoryController = new ControllerKategori();
+        this.itemTypeController = new ControllerJenisSampah(); // Inisialisasi ItemTypeController
 
         initComponents();
         setupLayout();
@@ -123,10 +123,10 @@ public class DashboardPanel extends JPanel {
         return panel;
     }
     private void loadCategories() {
-        List<Category> categories = categoryController.getAllCategories();
+        List<Kategori> categories = categoryController.getAllCategories();
         categoryTableModel.setRowCount(0); // Bersihkan data tabel sebelumnya
     
-        for (Category category : categories) {
+        for (Kategori category : categories) {
             categoryTableModel.addRow(new Object[]{
                 category.getId(),
                 category.getName(),
@@ -136,13 +136,13 @@ public class DashboardPanel extends JPanel {
     }
     
     private void loadItemTypes() {
-        List<ItemType> itemTypes = itemTypeController.getAllItemTypes();
+        List<JenisSampah> itemTypes = itemTypeController.getAllItemTypes();
     
         itemTypeTableModel.setRowCount(0);
     
         Set<String> addedItemTypes = new HashSet<>();
     
-        for (ItemType itemType : itemTypes) {
+        for (JenisSampah itemType : itemTypes) {
             String uniqueKey = itemType.getId() + "_" + itemType.getName();  
             if (!addedItemTypes.contains(uniqueKey)) {
                 addedItemTypes.add(uniqueKey); 
@@ -167,14 +167,14 @@ public class DashboardPanel extends JPanel {
 
         // Category Tab Listeners
         addCategoryButton.addActionListener(e -> {
-            CategoryFormDialog dialog = new CategoryFormDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Tambah Kategori");
+            FormDialogKategori dialog = new FormDialogKategori((JFrame) SwingUtilities.getWindowAncestor(this), "Tambah Kategori");
         
             dialog.addSaveButtonListener(event -> {
                 String name = dialog.getCategoryName();
                 String description = dialog.getCategoryDescription();
         
                 if (!name.isEmpty() && !description.isEmpty()) {
-                    Category newCategory = new Category();
+                    Kategori newCategory = new Kategori();
                     newCategory.setName(name);
                     newCategory.setDescription(description);
         
@@ -197,7 +197,7 @@ public class DashboardPanel extends JPanel {
                 String currentName = (String) categoryTableModel.getValueAt(selectedRow, 1);
                 String currentDescription = (String) categoryTableModel.getValueAt(selectedRow, 2);
         
-                CategoryFormDialog dialog = new CategoryFormDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Ubah Kategori");
+                FormDialogKategori dialog = new FormDialogKategori((JFrame) SwingUtilities.getWindowAncestor(this), "Ubah Kategori");
                 dialog.setCategoryName(currentName);
                 dialog.setCategoryDescription(currentDescription);
         
@@ -206,7 +206,7 @@ public class DashboardPanel extends JPanel {
                     String newDescription = dialog.getCategoryDescription();
         
                     if (!newName.isEmpty() && !newDescription.isEmpty()) {
-                        Category updatedCategory = new Category();
+                        Kategori updatedCategory = new Kategori();
                         updatedCategory.setId(categoryId); 
                         updatedCategory.setName(newName);
                         updatedCategory.setDescription(newDescription);
@@ -231,7 +231,7 @@ public class DashboardPanel extends JPanel {
         // Item Type Tab Listeners
         // Tombol "Add" untuk menambahkan Item Type
         addItemTypeButton.addActionListener(e -> {
-            ItemTypeFormDialog dialog = new ItemTypeFormDialog(
+            FormJenisSampah dialog = new FormJenisSampah(
                 (JFrame) SwingUtilities.getWindowAncestor(this),
                 itemTypeController,
                 categoryController,
@@ -241,10 +241,10 @@ public class DashboardPanel extends JPanel {
             dialog.addSaveButtonListener(event -> {
                 String name = dialog.getItemTypeName();
                 String description = dialog.getItemTypeDescription();
-                Category selectedCategory = dialog.getSelectedCategory();
+                Kategori selectedCategory = dialog.getSelectedCategory();
 
                 if (!name.isEmpty() && !description.isEmpty() && selectedCategory != null) {
-                    ItemType newItemType = new ItemType();
+                    JenisSampah newItemType = new JenisSampah();
                     newItemType.setName(name);
                     newItemType.setDescription(description);
                     newItemType.setCategoryId(selectedCategory.getId());
@@ -270,10 +270,10 @@ public class DashboardPanel extends JPanel {
         
                 String currentCategoryName = (String) itemTypeTableModel.getValueAt(selectedRow, 2);
                 
-                Category currentCategory = categoryController.getCategoryByName(currentCategoryName);
+                Kategori currentCategory = categoryController.getCategoryByName(currentCategoryName);
                 
                 if (currentCategory != null) {
-                    ItemTypeFormDialog dialog = new ItemTypeFormDialog(
+                    FormJenisSampah dialog = new FormJenisSampah(
                         (JFrame) SwingUtilities.getWindowAncestor(this),
                         itemTypeController,
                         categoryController,
@@ -287,10 +287,10 @@ public class DashboardPanel extends JPanel {
                     dialog.addSaveButtonListener(event -> {
                         String newName = dialog.getItemTypeName();
                         String newDescription = dialog.getItemTypeDescription();
-                        Category selectedCategory = dialog.getSelectedCategory();
+                        Kategori selectedCategory = dialog.getSelectedCategory();
         
                         if (!newName.isEmpty() && !newDescription.isEmpty() && selectedCategory != null) {
-                            ItemType updatedItemType = new ItemType();
+                            JenisSampah updatedItemType = new JenisSampah();
                             updatedItemType.setId(itemTypeId);  
                             updatedItemType.setName(newName);
                             updatedItemType.setDescription(newDescription);

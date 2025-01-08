@@ -1,6 +1,6 @@
 package tubes.ewaste.model;
 
-public class Category {
+public class Kategori {
     private int id;
     private String name;
     private String description;

@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.*;
 import tubes.ewaste.model.User;
 import java.util.List;
 
-public interface UserMapper {
+public interface MapperUser {
 
     @Select("SELECT * FROM users")
     List<User> getAll();
