@@ -14,19 +14,9 @@ public interface UserMapper {
 
     @Select("SELECT * FROM users WHERE email = #{email}")
     @Results({
-        @Result(property = "id", column = "id"),
-        @Result(property = "name", column = "name"),
         @Result(property = "email", column = "email"),
         @Result(property = "password", column = "password"),
-        @Result(property = "address", column = "address"),
-        @Result(property = "birthDate", column = "birth_date"),
-        @Result(property = "createdAt", column = "created_at"),
         @Result(property = "roleId", column = "role_id"),
-        @Result(property = "otp", column = "otp"),
-        @Result(property = "otpExpiry", column = "otp_expiry"),
-        @Result(property = "isUsed", column = "is_used"),
-        @Result(property = "verified", column = "is_verified"),
-        @Result(property = "photoPath", column = "photo_path")
     })
     User getByEmail(String email);
 
