@@ -2,16 +2,22 @@ package tubes.ewaste.controller;
 
 import java.util.List;
 import java.util.Random;
+
+import javax.swing.JFrame;
+
 import java.time.LocalDateTime;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+
 import tubes.ewaste.config.DatabaseConfig;
 import tubes.ewaste.mapper.OtpMapper;
 import tubes.ewaste.mapper.UserMapper;
 import tubes.ewaste.model.Otp;
 import tubes.ewaste.model.User;
 import tubes.ewaste.service.MailService;
+import tubes.ewaste.view.ChangePasswordDialog;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserController {
@@ -26,7 +32,10 @@ public class UserController {
     public boolean login(String email, String password) {
         try (SqlSession session = factory.openSession()) {
             UserMapper mapper = session.getMapper(UserMapper.class);
-            return mapper.validateLogin(email, password) > 0;
+            User user = mapper.getByEmail(email);
+
+            // Check if user exists and password matches
+            return user != null && BCrypt.checkpw(password, user.getPassword());
         }
     }
 
@@ -45,7 +54,7 @@ public class UserController {
             Otp otp = new Otp();
             otp.setEmail(user.getEmail());
             otp.setOtpCode(otpCode);
-            otp.setExpiresAt(LocalDateTime.now().plusMinutes(60)); 
+            otp.setExpiresAt(LocalDateTime.now().plusMinutes(60));
             otp.setStatus("ACTIVE");
             otpMapper.insert(otp);
 
@@ -54,13 +63,12 @@ public class UserController {
             mailService.sendOtpEmail(user.getEmail(), otpCode);
         }
     }
-    
+
     private String generateOtp() {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000); 
         return String.valueOf(otp);
     }
-    
 
     public boolean verifyOtp(String email, String otpCode) {
         try (SqlSession session = factory.openSession()) {
@@ -69,19 +77,19 @@ public class UserController {
     
             Otp otp = otpMapper.findActiveOtpByEmail(email);
             if (otp == null || otp.getExpiresAt().isBefore(LocalDateTime.now())) {
-                return false; 
+                return false;
             }
-    
+
             if (otp.getOtpCode().equals(otpCode)) {
                 otpMapper.updateStatus(otp.getId(), "USED");
                 session.commit();
     
                 userMapper.updateVerificationStatus(email, "YES");
                 session.commit();
-    
+
                 return true;
             }
-    
+
             return false;
         }
     }
