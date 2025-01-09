@@ -32,8 +32,9 @@ public interface MapperUser {
     @Delete("DELETE FROM users WHERE id = #{id}")
     void delete(Integer id);
 
-    @Select("SELECT COUNT(*) FROM users WHERE email = #{email} AND password = #{password}")
-    int validateLogin(@Param("email") String email, @Param("password") String password);
+    @Select("SELECT password FROM users WHERE email = #{email}")
+    String getPasswordByEmail(@Param("email") String email);
+    
 
     // Update the verification status of the user
     @Update("UPDATE users SET is_verified = #{status} WHERE email = #{email}")
