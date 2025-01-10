@@ -1,6 +1,7 @@
 package tubes.ewaste.mapper;
 
 import org.apache.ibatis.annotations.*;
+
 import tubes.ewaste.model.User;
 import java.util.List;
 
@@ -51,5 +52,17 @@ public interface MapperUser {
 
     @Update("UPDATE users SET name = #{name}, email = #{email}, password = #{password}, address = #{address}, birth_date = #{birthDate}, photo_path = #{photoPath}, role_id = #{roleId} WHERE id = #{id}")
     int updateUser(User user);
+
+      @Update("UPDATE users SET password = #{hashedPassword} WHERE id = #{userId}")
+    void updatePassword(@Param("userId") Integer userId, @Param("hashedPassword") String hashedPassword);
+
+    @Select("SELECT password FROM users WHERE id = #{userId}")
+    String getPasswordById(@Param("userId") Integer userId);
+
+    @Select("SELECT COUNT(*) > 0 FROM users WHERE email = #{email}")
+    boolean checkEmailExists(@Param("email") String email);
+
+   
+
 
 }
