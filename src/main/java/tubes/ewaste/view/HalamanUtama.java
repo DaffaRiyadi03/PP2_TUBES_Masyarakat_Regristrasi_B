@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-public class HalamanUtamaPanel extends JPanel {
+public class HalamanUtama extends JPanel {
 
     private final MainFrame mainFrame;
     private final ControllerKategori categoryController;
@@ -27,7 +27,7 @@ public class HalamanUtamaPanel extends JPanel {
     private DefaultTableModel itemTypeTableModel;
     private JLabel imageLabel;
 
-    public HalamanUtamaPanel(MainFrame mainFrame) {
+    public HalamanUtama(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.categoryController = new ControllerKategori();
         this.itemTypeController = new ControllerJenisSampah();

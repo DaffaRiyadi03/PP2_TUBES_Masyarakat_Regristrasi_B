@@ -49,7 +49,7 @@ public interface MapperUser {
     })
     User getUserById(Integer id);
 
-    @Update("UPDATE users SET name = #{name}, address = #{address}, birth_date = #{birthDate}, photo_path = #{photoPath} WHERE id = #{id}")
+    @Update("UPDATE users SET name = #{name}, email = #{email}, password = #{password}, address = #{address}, birth_date = #{birthDate}, photo_path = #{photoPath}, role_id = #{roleId} WHERE id = #{id}")
     int updateUser(User user);
 
 }

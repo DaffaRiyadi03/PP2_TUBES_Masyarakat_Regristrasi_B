@@ -10,27 +10,28 @@ import java.time.LocalDate;
 import java.awt.geom.Ellipse2D;
 import javax.swing.border.EmptyBorder;
 
-public class HalamanProfile extends JPanel {
+public class HalamanProfil extends JPanel {
     private final MainFrame mainFrame;
     private final ControllerUser userController;
 
     private JTextField nameField;
     private JTextField emailField;
     private JTextField addressField;
-    private JTextField birthDateField; // Format: yyyy-MM-dd
+    private JTextField birthDateField;
     private JLabel profilePictureLabel;
     private JButton saveButton;
     private JButton changePasswordButton;
     private JButton uploadPhotoButton;
+    private JButton deleteAccountButton;
     private JButton backButton;
 
     private User user;
 
-    public HalamanProfile(MainFrame mainFrame, Integer userId) {
+    public HalamanProfil(MainFrame mainFrame, Integer userId) {
         this.mainFrame = mainFrame;
         this.userController = new ControllerUser();
-        this.user = userController.getUserById(userId); // Ambil data user berdasarkan ID
-  
+        this.user = userController.getUserById(userId);
+
         initComponents();
         populateFields();
         setupLayout();
@@ -48,11 +49,11 @@ public class HalamanProfile extends JPanel {
                 if (getIcon() != null) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    
+
                     int diameter = Math.min(getWidth(), getHeight());
                     int x = (getWidth() - diameter) / 2;
                     int y = (getHeight() - diameter) / 2;
-                    
+
                     g2.setClip(new Ellipse2D.Float(x, y, diameter, diameter));
                     super.paintComponent(g2);
                     g2.dispose();
@@ -65,23 +66,11 @@ public class HalamanProfile extends JPanel {
         profilePictureLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
         profilePictureLabel.setPreferredSize(new Dimension(150, 150));
 
-        saveButton = new JButton("Simpan");
-        saveButton.setBackground(new Color(98, 0, 238));
-        saveButton.setForeground(Color.WHITE);
-        saveButton.setFocusPainted(false);
-
-        changePasswordButton = new JButton("Ubah Password");
-        changePasswordButton.setBackground(Color.DARK_GRAY);
-        changePasswordButton.setForeground(Color.WHITE);
-        changePasswordButton.setFocusPainted(false);
-
-        backButton = new JButton("Kembali");
-        backButton.setFocusPainted(false);
-        backButton.setPreferredSize(new Dimension(80, 30));
-
-        uploadPhotoButton = new JButton("Unggah Foto");
-        uploadPhotoButton.setFocusPainted(false);
-        uploadPhotoButton.setBackground(Color.LIGHT_GRAY);
+        saveButton = createButton("Simpan", new Color(98, 0, 238), Color.WHITE);
+        changePasswordButton = createButton("Ubah Password", Color.DARK_GRAY, Color.WHITE);
+        deleteAccountButton = createButton("Hapus Akun", Color.RED, Color.WHITE);
+        backButton = createButton("Kembali", null, null);
+        uploadPhotoButton = createButton("Unggah Foto", Color.LIGHT_GRAY, null);
 
         Dimension fieldSize = new Dimension(250, 35);
         nameField.setPreferredSize(fieldSize);
@@ -91,6 +80,15 @@ public class HalamanProfile extends JPanel {
         Dimension buttonSize = new Dimension(200, 40);
         saveButton.setPreferredSize(buttonSize);
         changePasswordButton.setPreferredSize(buttonSize);
+        deleteAccountButton.setPreferredSize(buttonSize);
+    }
+
+    private JButton createButton(String text, Color background, Color foreground) {
+        JButton button = new JButton(text);
+        button.setFocusPainted(false);
+        if (background != null) button.setBackground(background);
+        if (foreground != null) button.setForeground(foreground);
+        return button;
     }
 
     private void populateFields() {
@@ -140,38 +138,21 @@ public class HalamanProfile extends JPanel {
         profilePanel.add(Box.createVerticalStrut(10));
         profilePanel.add(uploadPhotoButton);
 
-        JPanel formPanel = new JPanel();
+        JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
-        formPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        formPanel.add(new JLabel("Nama Lengkap:"), gbc);
-
-        gbc.gridx = 1;
-        formPanel.add(nameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        formPanel.add(new JLabel("Alamat:"), gbc);
-
-        gbc.gridx = 1;
-        formPanel.add(addressField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        formPanel.add(new JLabel("Tanggal Lahir:"), gbc);
-
-        gbc.gridx = 1;
-        formPanel.add(birthDateField, gbc);
+        addField(formPanel, gbc, "Nama Lengkap:", nameField, 0);
+        addField(formPanel, gbc, "Alamat:", addressField, 1);
+        addField(formPanel, gbc, "Tanggal Lahir:", birthDateField, 2);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(saveButton);
         buttonPanel.add(changePasswordButton);
+        buttonPanel.add(deleteAccountButton);
 
         add(headerPanel);
         add(Box.createVerticalStrut(10));
@@ -181,66 +162,77 @@ public class HalamanProfile extends JPanel {
         add(Box.createVerticalStrut(20));
         add(buttonPanel);
     }
-    
+
+    private void addField(JPanel panel, GridBagConstraints gbc, String labelText, JComponent field, int row) {
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        panel.add(new JLabel(labelText), gbc);
+
+        gbc.gridx = 1;
+        panel.add(field, gbc);
+    }
+
     private void setupListeners() {
-        saveButton.addActionListener(e -> {
-            String name = nameField.getText();
-            String address = addressField.getText();
-            String birthDateStr = birthDateField.getText();
+        saveButton.addActionListener(e -> saveUserProfile());
+        uploadPhotoButton.addActionListener(e -> uploadPhoto());
+        changePasswordButton.addActionListener(e -> mainFrame.showUbahPassword());
+        deleteAccountButton.addActionListener(e -> deleteAccount());
+        backButton.addActionListener(e -> mainFrame.showHalamanUtama());
+    }
 
-            if (name.isEmpty() || birthDateStr.isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                        "Nama atau tanggal lahir harus diisi!",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+    private void saveUserProfile() {
+        String name = nameField.getText();
+        String address = addressField.getText();
+        String birthDateStr = birthDateField.getText();
 
+        if (name.isEmpty() || birthDateStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama atau tanggal lahir harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            LocalDate birthDate = LocalDate.parse(birthDateStr);
+            user.setName(name);
+            user.setAddress(address);
+            user.setBirthDate(birthDate);
+
+            boolean updated = userController.updateUser(user);
+            String message = updated ? "Profil berhasil diperbarui!" : "Gagal memperbarui profil.";
+            JOptionPane.showMessageDialog(this, message, updated ? "Sukses" : "Error", updated ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void uploadPhoto() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String photoPath = fileChooser.getSelectedFile().getAbsolutePath();
+            user.setPhotoPath(photoPath);
+
+            ImageIcon imageIcon = new ImageIcon(photoPath);
+            Image image = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            profilePictureLabel.setIcon(new ImageIcon(image));
+        }
+    }
+
+    private void deleteAccount() {
+        int confirmed = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus akun ini? Tindakan ini tidak dapat dibatalkan.", "Konfirmasi Hapus Akun", JOptionPane.YES_NO_OPTION);
+
+        if (confirmed == JOptionPane.YES_OPTION) {
             try {
-                LocalDate birthDate = LocalDate.parse(birthDateStr);
-                user.setName(name);
-                user.setAddress(address);
-                user.setBirthDate(birthDate);
-
-                boolean updated = userController.updateUser(user);
-                if (updated) {
-                    JOptionPane.showMessageDialog(this,
-                            "Profil berhasil diperbarui!",
-                            "Sukses",
-                            JOptionPane.INFORMATION_MESSAGE);
+                Integer userId = mainFrame.getCurrentUserId();
+                if (userId != null) {
+                    userController.deleteUser(userId);
+                    JOptionPane.showMessageDialog(this, "Akun berhasil dihapus.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    mainFrame.showLogin();
                 } else {
-                    JOptionPane.showMessageDialog(this,
-                            "Gagal memperbarui profil.",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Gagal menghapus akun. User ID tidak ditemukan.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Error: " + ex.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        });
-
-        uploadPhotoButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            int result = fileChooser.showOpenDialog(this);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                String photoPath = fileChooser.getSelectedFile().getAbsolutePath();
-                user.setPhotoPath(photoPath);
-
-                ImageIcon imageIcon = new ImageIcon(photoPath);
-                Image image = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-                profilePictureLabel.setIcon(new ImageIcon(image));
-            }
-        });
-
-        changePasswordButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Fitur ubah password belum tersedia.", "Info", JOptionPane.INFORMATION_MESSAGE);
-        });
-
-        backButton.addActionListener(e -> {
-            mainFrame.showHalamanUtama();
-        });
+        }
     }
 }

@@ -1,17 +1,16 @@
 package tubes.ewaste.view;
 
 import tubes.ewaste.controller.ControllerUser;
-
 import javax.swing.*;
 import java.awt.*;
 
-public class HalamanOtp extends JPanel {
+public class HalamanOTP extends JPanel {
     private final MainFrame mainFrame;
     private JTextField otpField;
     private JButton submitButton;
     private JButton backButton;
 
-    public HalamanOtp(MainFrame mainFrame) {
+    public HalamanOTP(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initComponents();
         setupLayout();

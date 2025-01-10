@@ -7,13 +7,14 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private HalamanLogin loginPanel;
-    private HalamanRegister registerPanel;
+    private HalamanRegistrasi registerPanel;
     private DashboardAdmin dashboardPanel;
-    private HalamanOtp otpPanel; // Tambahkan variabel OTPPanel
+    private HalamanOTP otpPanel; // Tambahkan variabel OTPPanel
     private String emailForVerification;
-    private HalamanUtamaPanel halamanUtamaPanel;
-    private HalamanProfile profilePanel;
+    private HalamanUtama halamanUtamaPanel;
+    private HalamanProfil profilePanel;
     private Integer currentUserId; // Untuk menyimpan user ID yang login
+    private HalamanUbahPassword halamanUbahPassword;
 
 
     public MainFrame() {
@@ -27,12 +28,13 @@ public class MainFrame extends JFrame {
     
         // Initialize panels
         loginPanel = new HalamanLogin(this);
-        registerPanel = new HalamanRegister(this);
+        registerPanel = new HalamanRegistrasi(this);
         dashboardPanel = new DashboardAdmin(this);
-        otpPanel = new HalamanOtp(this); 
-        halamanUtamaPanel = new HalamanUtamaPanel(this);
-        profilePanel = new HalamanProfile(this, currentUserId); // Inisialisasi ProfilePanel
-    
+        otpPanel = new HalamanOTP(this); 
+        halamanUtamaPanel = new HalamanUtama(this);
+        profilePanel = new HalamanProfil(this, currentUserId); // Inisialisasi ProfilePanel
+        halamanUbahPassword = new HalamanUbahPassword(this);
+        
         // Add panels to card layout
         mainPanel.add(loginPanel, "LOGIN");
         mainPanel.add(registerPanel, "REGISTER");
@@ -40,6 +42,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(otpPanel, "OTP");
         mainPanel.add(halamanUtamaPanel, "HALAMAN_UTAMA");
         mainPanel.add(profilePanel, "PROFILE"); // Tambahkan ProfilePanel ke mainPanel
+        mainPanel.add(halamanUbahPassword, "UBAH_PASSWORD");
     
         // Add main panel to frame
         add(mainPanel);
@@ -52,7 +55,7 @@ public class MainFrame extends JFrame {
     public void showProfile() {
         // Pastikan userId diambil dari user yang login
         if (currentUserId != null) {
-            profilePanel = new HalamanProfile(this, currentUserId); // Berikan userId saat inisialisasi
+            profilePanel = new HalamanProfil(this, currentUserId); // Berikan userId saat inisialisasi
             mainPanel.add(profilePanel, "PROFILE"); // Tambahkan panel ke mainPanel
             cardLayout.show(mainPanel, "PROFILE"); // Tampilkan ProfilePanel
         } else {
@@ -105,5 +108,6 @@ public class MainFrame extends JFrame {
     public Integer getCurrentUserId() {
         return currentUserId;
     }
-    
+    public void showUbahPassword() { 
+        cardLayout.show(mainPanel, "UBAH_PASSWORD"); }
 }
