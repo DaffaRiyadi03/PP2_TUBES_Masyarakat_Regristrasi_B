@@ -7,7 +7,7 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class HalamanRegister extends JPanel {
+public class HalamanRegistrasi extends JPanel {
     private final MainFrame mainFrame;
     private final ControllerUser userController;
 
@@ -20,7 +20,7 @@ public class HalamanRegister extends JPanel {
     private JButton registerButton;
     private JButton backButton;
 
-    public HalamanRegister(MainFrame mainFrame) {
+    public HalamanRegistrasi(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.userController = new ControllerUser();
 
@@ -62,8 +62,14 @@ public class HalamanRegister extends JPanel {
 
         // Title Panel
         JPanel titlePanel = new JPanel();
-        JLabel titleLabel = new JLabel("Register New Account");
+        JLabel titleLabel = new JLabel("E-Wastepas");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titlePanel.add(titleLabel);
+
+        // Title Panel
+        JPanel titlePanel1 = new JPanel();
+        JLabel titleLabel1 = new JLabel("Registrasi");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         titlePanel.add(titleLabel);
 
         // Form Panel
@@ -73,17 +79,17 @@ public class HalamanRegister extends JPanel {
         formGbc.fill = GridBagConstraints.HORIZONTAL;
         formGbc.insets = new Insets(5, 5, 5, 5);
 
-        formPanel.add(new JLabel("Name:"), formGbc);
+        formPanel.add(new JLabel("Nama:"), formGbc);
         formPanel.add(nameField, formGbc);
         formPanel.add(new JLabel("Email:"), formGbc);
         formPanel.add(emailField, formGbc);
         formPanel.add(new JLabel("Password:"), formGbc);
         formPanel.add(passwordField, formGbc);
-        formPanel.add(new JLabel("Confirm Password:"), formGbc);
+        formPanel.add(new JLabel("Konfirmasi Password:"), formGbc);
         formPanel.add(confirmPasswordField, formGbc);
-        formPanel.add(new JLabel("Address:"), formGbc);
+        formPanel.add(new JLabel("Alamat:"), formGbc);
         formPanel.add(new JScrollPane(addressArea), formGbc);
-        formPanel.add(new JLabel("Birth Date (YYYY-MM-DD):"), formGbc);
+        formPanel.add(new JLabel("Tanggal Lahir (YYYY-MM-DD):"), formGbc);
         formPanel.add(birthDateField, formGbc);
         formPanel.add(Box.createVerticalStrut(20), formGbc);
         formPanel.add(registerButton, formGbc);
@@ -116,16 +122,20 @@ public class HalamanRegister extends JPanel {
                 addressArea.getText().isEmpty() || birthDateField.getText().isEmpty()) {
 
             JOptionPane.showMessageDialog(this,
-                    "Please fill all fields",
-                    "Validation Error",
+                    // "Please fill all fields",
+                    // "Validation Error",
+                    "Data tidak valid,silahkan cek data kembali!",
+                    "Error",
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         if (!new String(passwordField.getPassword()).equals(new String(confirmPasswordField.getPassword()))) {
             JOptionPane.showMessageDialog(this,
-                    "Passwords do not match",
-                    "Validation Error",
+                    // "Passwords do not match",
+                    // "Validation Error",
+                    "Data tidak valid,silahkan cek data kembali!",
+                    "Error",
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -134,8 +144,10 @@ public class HalamanRegister extends JPanel {
             LocalDate.parse(birthDateField.getText());
         } catch (DateTimeParseException e) {
             JOptionPane.showMessageDialog(this,
-                    "Invalid date format. Please use YYYY-MM-DD",
-                    "Validation Error",
+                    // "Invalid date format. Please use YYYY-MM-DD",
+                    // "Validation Error",
+                    "Data tidak valid,silahkan cek data kembali!",
+                    "Error",
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -155,10 +167,10 @@ public class HalamanRegister extends JPanel {
             userController.register(user);
     
             // Tampilkan pesan sukses dan informasikan pengguna untuk cek email
-            JOptionPane.showMessageDialog(this,
-            "Registration successful! Please check your email to verify your account.",
-            "Registration Success",
-            JOptionPane.INFORMATION_MESSAGE);
+            // JOptionPane.showMessageDialog(this,
+            // // "Registration successful! Please check your email to verify your account.",
+            // // "Registration Success",
+            // JOptionPane.INFORMATION_MESSAGE);
             
             // Simpan email pengguna untuk digunakan di OTPPanel
             mainFrame.setEmailForVerification(user.getEmail());
@@ -168,7 +180,7 @@ public class HalamanRegister extends JPanel {
     
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
-                    "Registration failed: " + ex.getMessage(),
+                    "Registrasi gagal : " + ex.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }

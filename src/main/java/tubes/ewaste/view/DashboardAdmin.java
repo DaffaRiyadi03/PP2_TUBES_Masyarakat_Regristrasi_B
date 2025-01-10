@@ -108,7 +108,7 @@ public class DashboardAdmin extends JPanel {
         JPanel itemTypePanel = new JPanel(new BorderLayout());
         itemTypePanel.add(new JScrollPane(itemTypeTable), BorderLayout.CENTER);
         itemTypePanel.add(createButtonPanel(refreshItemTypeButton, addItemTypeButton, updateItemTypeButton, deleteItemTypeButton), BorderLayout.SOUTH);
-        tabbedPane.addTab("Kelola Jenis Item", itemTypePanel);
+        tabbedPane.addTab("Kelola Jenis", itemTypePanel);
 
         // Add TabbedPane and Logout Button
         add(tabbedPane, BorderLayout.CENTER);

@@ -3,7 +3,6 @@ package tubes.ewaste.controller;
 import java.util.List;
 import java.util.Random;
 import java.time.LocalDateTime;
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import tubes.ewaste.config.DatabaseConfig;
@@ -115,8 +114,6 @@ public class ControllerUser {
         }
     }
     
-    
-
     public User findUserByEmail(String email) {
         try (SqlSession session = factory.openSession()) {
             MapperUser mapper = session.getMapper(MapperUser.class);
@@ -167,5 +164,12 @@ public class ControllerUser {
         }
     }
       
+    public String hashPassword(String password) { 
+        return BCrypt.hashpw(password, BCrypt.gensalt()); 
+    } 
+        
+    public boolean checkPassword(String password, String hashedPassword) { 
+        return BCrypt.checkpw(password, hashedPassword); 
+    }
 
 }

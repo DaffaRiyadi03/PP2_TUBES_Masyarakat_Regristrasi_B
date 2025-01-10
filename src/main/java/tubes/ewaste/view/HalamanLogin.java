@@ -2,7 +2,6 @@ package tubes.ewaste.view;
 
 import tubes.ewaste.controller.ControllerUser;
 import tubes.ewaste.model.User;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,7 +27,7 @@ public class HalamanLogin extends JPanel {
         emailField = new JTextField(20);
         passwordField = new JPasswordField(20);
         loginButton = new JButton("Login");
-        registerButton = new JButton("Register");
+        registerButton = new JButton("Registrasi");
 
         Dimension fieldSize = new Dimension(250, 35);
         emailField.setPreferredSize(fieldSize);
@@ -47,7 +46,7 @@ public class HalamanLogin extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);
 
         JPanel headerPanel = new JPanel();
-        JLabel titleLabel = new JLabel("E-WastePas");
+        JLabel titleLabel = new JLabel("E-Wastepas");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         headerPanel.add(titleLabel);
 
@@ -78,7 +77,9 @@ public class HalamanLogin extends JPanel {
     
             if (email.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                        "Tolong isi semua kolom",
+                        // "Tolong isi semua kolom",
+                        // "Error",
+                        "Email atau Password tidak sesuai,silahkan cek kembali!",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
@@ -94,15 +95,15 @@ public class HalamanLogin extends JPanel {
                     } else if (user.getRoleId() == 1) {
                         mainFrame.showDashboard(); // Navigasi ke dashboard untuk akun admin
                     } else {
-                        JOptionPane.showMessageDialog(this,
-                                "Login berhasil!",
-                                "Sukses",
-                                JOptionPane.INFORMATION_MESSAGE);
+                        // JOptionPane.showMessageDialog(this,
+                        //         "Login berhasil!",
+                        //         "Sukses",
+                        //         JOptionPane.INFORMATION_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(this,
-                            "Email atau password salah",
-                            "Login Gagal",
+                            "Email atau Password tidak sesuai,silahkan cek kembali!",
+                            "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
