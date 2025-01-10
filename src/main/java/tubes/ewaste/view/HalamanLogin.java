@@ -4,20 +4,21 @@ import tubes.ewaste.controller.ControllerUser;
 import tubes.ewaste.model.User;
 import javax.swing.*;
 import java.awt.*;
+import tubes.ewaste.controller.ControllerUser;
 
 public class HalamanLogin extends JPanel {
     private final MainFrame mainFrame;
     private final ControllerUser userController;
-
     private JTextField emailField;
     private JPasswordField passwordField;
     private JButton loginButton;
+    private JLabel errorLabel;
     private JButton registerButton;
+     private JButton forgotPasswordButton;
 
     public HalamanLogin(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.userController = new ControllerUser();
-
         initComponents();
         setupLayout();
         setupListeners();
@@ -28,17 +29,21 @@ public class HalamanLogin extends JPanel {
         passwordField = new JPasswordField(20);
         loginButton = new JButton("Login");
         registerButton = new JButton("Registrasi");
-
+        forgotPasswordButton = new JButton("Lupa Password");
+        errorLabel = new JLabel(); // Inisialisasi errorLabel
         Dimension fieldSize = new Dimension(250, 35);
         emailField.setPreferredSize(fieldSize);
         passwordField.setPreferredSize(fieldSize);
 
         Dimension buttonSize = new Dimension(250, 40);
         loginButton.setPreferredSize(buttonSize);
-        registerButton.setPreferredSize(buttonSize);
+          registerButton.setPreferredSize(buttonSize);
+          forgotPasswordButton.setPreferredSize(buttonSize);
+
+
     }
 
-    private void setupLayout() {
+     private void setupLayout() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -60,19 +65,22 @@ public class HalamanLogin extends JPanel {
         formPanel.add(emailField, formGbc);
         formPanel.add(new JLabel("Password:"), formGbc);
         formPanel.add(passwordField, formGbc);
-        formPanel.add(Box.createVerticalStrut(20), formGbc);
-        formPanel.add(loginButton, formGbc);
         formPanel.add(Box.createVerticalStrut(10), formGbc);
-        formPanel.add(registerButton, formGbc);
+        formPanel.add(loginButton, formGbc);
+        formPanel.add(Box.createVerticalStrut(5), formGbc);
+          formPanel.add(registerButton, formGbc);
+          formPanel.add(Box.createVerticalStrut(5),formGbc);
+          formPanel.add(forgotPasswordButton,formGbc);
+        formPanel.add(errorLabel, formGbc);
 
-        add(headerPanel, gbc);
-        add(Box.createVerticalStrut(30), gbc);
-        add(formPanel, gbc);
+
+       add(headerPanel, gbc); // Tambahkan headerPanel ke container utama
+       add(formPanel, gbc); // Tambahkan formPanel ke container utama
     }
 
     private void setupListeners() {
-        loginButton.addActionListener(e -> {
-            String email = emailField.getText();
+       loginButton.addActionListener(e -> {
+            String email = emailField.getText().trim();
             String password = new String(passwordField.getPassword());
     
             if (email.isEmpty() || password.isEmpty()) {
@@ -84,7 +92,7 @@ public class HalamanLogin extends JPanel {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-    
+
             try {
                 if (userController.login(email, password)) {
                     User user = userController.findUserByEmail(email);
@@ -107,13 +115,16 @@ public class HalamanLogin extends JPanel {
                             JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Error saat login: " + ex.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                errorLabel.setText("Terjadi kesalahan: " + ex.getMessage());
             }
         });
-    
-        registerButton.addActionListener(e -> mainFrame.showRegister());
-    }    
+
+         registerButton.addActionListener(e -> {
+            mainFrame.showRegister();
+        });
+
+          forgotPasswordButton.addActionListener(e -> {
+            mainFrame.showForgotPassword();
+        });
+    }
 }
