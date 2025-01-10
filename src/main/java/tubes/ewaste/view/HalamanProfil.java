@@ -13,9 +13,9 @@ import javax.swing.border.EmptyBorder;
 public class HalamanProfil extends JPanel {
     private final MainFrame mainFrame;
     private final ControllerUser userController;
-    private User user;
 
     private JTextField nameField;
+    private JTextField emailField;
     private JTextField addressField;
     private JTextField birthDateField;
     private JLabel profilePictureLabel;
@@ -24,6 +24,8 @@ public class HalamanProfil extends JPanel {
     private JButton uploadPhotoButton;
     private JButton deleteAccountButton;
     private JButton backButton;
+
+    private User user;
 
     public HalamanProfil(MainFrame mainFrame, Integer userId) {
         this.mainFrame = mainFrame;
@@ -131,7 +133,9 @@ public class HalamanProfil extends JPanel {
         JPanel profilePanel = new JPanel();
         profilePanel.setBackground(Color.WHITE);
         profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.Y_AXIS));
+        profilePanel.add(Box.createVerticalStrut(10));
         profilePanel.add(profilePictureLabel);
+        profilePanel.add(Box.createVerticalStrut(10));
         profilePanel.add(uploadPhotoButton);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
@@ -151,15 +155,12 @@ public class HalamanProfil extends JPanel {
         buttonPanel.add(deleteAccountButton);
 
         add(headerPanel);
+        add(Box.createVerticalStrut(10));
         add(profilePanel);
-        add(new JLabel("Nama:"));
-        add(nameField);
-        add(new JLabel("Alamat:"));
-        add(addressField);
-        add(new JLabel("Tanggal Lahir:"));
-        add(birthDateField);
-        add(saveButton);
-        add(changePasswordButton);
+        add(Box.createVerticalStrut(10));
+        add(formPanel);
+        add(Box.createVerticalStrut(20));
+        add(buttonPanel);
     }
 
     private void addField(JPanel panel, GridBagConstraints gbc, String labelText, JComponent field, int row) {
