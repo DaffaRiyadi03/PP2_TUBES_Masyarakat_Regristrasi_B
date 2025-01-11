@@ -13,6 +13,8 @@ public class HalamanLogin extends JPanel {
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton registerButton;
+    private JButton forgotPasswordButton; // Tombol Lupa Password
+
 
     public HalamanLogin(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -28,6 +30,7 @@ public class HalamanLogin extends JPanel {
         passwordField = new JPasswordField(20);
         loginButton = new JButton("Login");
         registerButton = new JButton("Registrasi");
+        forgotPasswordButton = new JButton("Lupa Password"); // Inisialisasi tombol lupa password
 
         Dimension fieldSize = new Dimension(250, 35);
         emailField.setPreferredSize(fieldSize);
@@ -36,6 +39,7 @@ public class HalamanLogin extends JPanel {
         Dimension buttonSize = new Dimension(250, 40);
         loginButton.setPreferredSize(buttonSize);
         registerButton.setPreferredSize(buttonSize);
+        forgotPasswordButton.setPreferredSize(buttonSize);
     }
 
     private void setupLayout() {
@@ -62,6 +66,8 @@ public class HalamanLogin extends JPanel {
         formPanel.add(passwordField, formGbc);
         formPanel.add(Box.createVerticalStrut(20), formGbc);
         formPanel.add(loginButton, formGbc);
+         formPanel.add(Box.createVerticalStrut(10), formGbc);
+        formPanel.add(forgotPasswordButton, formGbc); // Tambahkan tombol lupa password
         formPanel.add(Box.createVerticalStrut(10), formGbc);
         formPanel.add(registerButton, formGbc);
 
@@ -77,9 +83,7 @@ public class HalamanLogin extends JPanel {
     
             if (email.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                        // "Tolong isi semua kolom",
-                        // "Error",
-                        "Email atau Password tidak sesuai,silahkan cek kembali!",
+                         "Email atau Password tidak sesuai,silahkan cek kembali!",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
@@ -95,14 +99,10 @@ public class HalamanLogin extends JPanel {
                     } else if (user.getRoleId() == 1) {
                         mainFrame.showDashboard(); // Navigasi ke dashboard untuk akun admin
                     } else {
-                        // JOptionPane.showMessageDialog(this,
-                        //         "Login berhasil!",
-                        //         "Sukses",
-                        //         JOptionPane.INFORMATION_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(this,
-                            "Email atau Password tidak sesuai,silahkan cek kembali!",
+                           "Email atau Password tidak sesuai,silahkan cek kembali!",
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -115,5 +115,6 @@ public class HalamanLogin extends JPanel {
         });
     
         registerButton.addActionListener(e -> mainFrame.showRegister());
+        forgotPasswordButton.addActionListener(e -> mainFrame.showLupaPassword());
     }    
 }
