@@ -6,14 +6,12 @@ import java.awt.*;
 
 public class HalamanOtp extends JPanel {
     private final MainFrame mainFrame;
-    private final ControllerUser controllerUser;
     private JTextField otpField;
-    private JButton verifyButton;
+    private JButton submitButton;
     private JButton backButton;
 
     public HalamanOtp(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        this.controllerUser = new ControllerUser();
         initComponents();
         setupLayout();
         setupListeners();
@@ -21,14 +19,14 @@ public class HalamanOtp extends JPanel {
 
     private void initComponents() {
         otpField = new JTextField(20);
-        verifyButton = new JButton("Verifikasi OTP");
-        backButton = new JButton("Kembali");
+        submitButton = new JButton("Submit");
+        backButton = new JButton("Back to Register");
 
         Dimension fieldSize = new Dimension(250, 35);
         otpField.setPreferredSize(fieldSize);
 
         Dimension buttonSize = new Dimension(250, 40);
-        verifyButton.setPreferredSize(buttonSize);
+        submitButton.setPreferredSize(buttonSize);
         backButton.setPreferredSize(buttonSize);
     }
 
@@ -39,53 +37,68 @@ public class HalamanOtp extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        
-        JLabel emailLabel = new JLabel("Email: " + mainFrame.getEmailForVerification());
-        emailLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        mainPanel.add(emailLabel, gbc);
-        
-        mainPanel.add(Box.createVerticalStrut(20), gbc);
-        mainPanel.add(new JLabel("Masukkan Kode OTP:"), gbc);
-        mainPanel.add(otpField, gbc);
-        mainPanel.add(Box.createVerticalStrut(20), gbc);
-        mainPanel.add(verifyButton, gbc);
-        mainPanel.add(Box.createVerticalStrut(10), gbc);
-        mainPanel.add(backButton, gbc);
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints formGbc = new GridBagConstraints();
+        formGbc.gridwidth = GridBagConstraints.REMAINDER;
+        formGbc.fill = GridBagConstraints.HORIZONTAL;
+        formGbc.insets = new Insets(5, 5, 5, 5);
 
-        add(mainPanel);
+        formPanel.add(new JLabel("Enter OTP:"), formGbc);
+        formPanel.add(otpField, formGbc);
+        formPanel.add(Box.createVerticalStrut(20), formGbc);
+        formPanel.add(submitButton, formGbc);
+        formPanel.add(Box.createVerticalStrut(10), formGbc);
+        formPanel.add(backButton, formGbc);
+
+        add(formPanel, gbc);
     }
 
     private void setupListeners() {
-        verifyButton.addActionListener(e -> {
+        submitButton.addActionListener(e -> {
             String otp = otpField.getText().trim();
-            String email = mainFrame.getEmailForVerification();
 
             if (otp.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                    "Masukkan kode OTP",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                        "Please enter the OTP",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             try {
-                if (controllerUser.verifyOtp(email, otp)) {
-                    mainFrame.showResetPassword();
+                ControllerUser userController = new ControllerUser();
+                String email = mainFrame.getEmailForVerification();
+
+                if (email == null || email.isEmpty()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Error: Email for verification is missing.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                boolean verified = userController.verifyOtp(email, otp);
+
+                if (verified) {
+                    JOptionPane.showMessageDialog(this,
+                            "OTP Verified Successfully!",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    mainFrame.showLogin();
                 } else {
                     JOptionPane.showMessageDialog(this,
-                        "Kode OTP tidak valid atau sudah kadaluarsa",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                            "Invalid or Expired OTP",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,
-                    "Terjadi kesalahan: " + ex.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                        "Error during OTP verification: " + ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        backButton.addActionListener(e -> mainFrame.showLogin());
+        backButton.addActionListener(e -> mainFrame.showRegister());
     }
 }
