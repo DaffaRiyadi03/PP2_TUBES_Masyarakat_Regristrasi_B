@@ -38,6 +38,7 @@ public class ControllerUser {
             return BCrypt.checkpw(password, hashedPassword);
         }
     }
+    
 
     public void register(User user) throws Exception {
         try (SqlSession session = factory.openSession()) {
@@ -54,21 +55,22 @@ public class ControllerUser {
             Otp otp = new Otp();
             otp.setEmail(user.getEmail());
             otp.setOtpCode(otpCode);
-            otp.setExpiresAt(LocalDateTime.now().plusMinutes(60));  // OTP valid for 60 minutes
+            otp.setExpiresAt(LocalDateTime.now().plusMinutes(60)); 
             otp.setStatus("ACTIVE");
             otpMapper.insert(otp);
 
             session.commit();
     
-            mailService.sendOtpEmail(user.getEmail(), otpCode);  // Send OTP to user's email
+            mailService.sendOtpEmail(user.getEmail(), otpCode);
         }
     }
-
-    public String generateOtp() {
+    
+    private String generateOtp() {
         Random random = new Random();
-        int otp = 100000 + random.nextInt(900000);  // Generate a 6-digit OTP
+        int otp = 100000 + random.nextInt(900000); 
         return String.valueOf(otp);
     }
+    
 
     public boolean verifyOtp(String email, String otpCode) {
         try (SqlSession session = factory.openSession()) {
@@ -85,22 +87,19 @@ public class ControllerUser {
     
             // Check expiration
             if (otp.getExpiresAt().isBefore(LocalDateTime.now())) {
-                // If OTP expired, update its status to expired
-                otpMapper.updateStatus(otp.getId(), "EXPIRED");
-                session.commit();  // Commit the expired OTP status
                 System.out.println("OTP has expired for email: " + email);
                 return false;
             }
     
             // Verify OTP code
             if (otp.getOtpCode().equals(otpCode)) {
-                // Update OTP status to 'USED'
+                // Update OTP status
                 otpMapper.updateStatus(otp.getId(), "USED");
     
                 // Update user verification status
                 userMapper.updateVerificationStatus(email, "YES");
     
-                // Commit changes to both OTP status and user verification status
+                // Commit all changes
                 session.commit();
     
                 System.out.println("OTP verified successfully for email: " + email);
@@ -114,26 +113,7 @@ public class ControllerUser {
             throw new RuntimeException("Failed to verify OTP. Please try again.");
         }
     }
-
-    public void saveOtpToDatabase(String email, String otpCode) {
-        try (SqlSession session = factory.openSession()) {
-            MapperOtp otpMapper = session.getMapper(MapperOtp.class);
-            
-            Otp otp = new Otp();
-            otp.setEmail(email);
-            otp.setOtpCode(otpCode);
-            otp.setExpiresAt(LocalDateTime.now().plusMinutes(60)); // OTP valid selama 60 menit
-            otp.setStatus("ACTIVE");
-            
-            otpMapper.insert(otp);
-             session.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-             throw new RuntimeException("Gagal menyimpan OTP ke database. Silakan coba lagi.");
-        }
-    }
     
-
     public User findUserByEmail(String email) {
         try (SqlSession session = factory.openSession()) {
             MapperUser mapper = session.getMapper(MapperUser.class);
@@ -171,74 +151,25 @@ public class ControllerUser {
         }
     }
 
-    // Updated method to handle user update
+    
     public boolean updateUser(User user) {
         try (SqlSession session = factory.openSession()) {
             MapperUser userMapper = session.getMapper(MapperUser.class);
-            int rowsAffected = userMapper.updateUser(user);
-            
-            if (rowsAffected > 0) {
-                session.commit(); // Commit changes only if update is successful
-                return true;
-            }
-            return false; // Return false if no rows were affected
+            int rowsAffected = userMapper.updateUser(user); // Pastikan metode update di UserMapper benar
+            session.commit(); // Commit perubahan jika update berhasil
+            return rowsAffected > 0;
         } catch (Exception e) {
             e.printStackTrace();
-            return false; // Return false if an error occurs
+            return false; // Mengembalikan false jika terjadi error
         }
     }
-
-    public boolean resetPassword(String email, String newPassword) {
-        try (SqlSession session = factory.openSession()) {
-            MapperUser userMapper = session.getMapper(MapperUser.class);
-            User user = userMapper.getByEmail(email);
-            
-            if (user != null) {
-                String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-                userMapper.updatePassword(user.getId(), hashedPassword);
-                session.commit();
-                return true;
-            }
-            return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+      
+    public String hashPassword(String password) { 
+        return BCrypt.hashpw(password, BCrypt.gensalt()); 
+    } 
+        
+    public boolean checkPassword(String password, String hashedPassword) { 
+        return BCrypt.checkpw(password, hashedPassword); 
     }
 
-    public void updatePasswordById(Integer userId, String newPassword) {
-        try (SqlSession session = factory.openSession()) {
-          MapperUser userMapper = session.getMapper(MapperUser.class);
-             String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-           userMapper.updatePassword(userId, hashedPassword);
-           session.commit();
-       } catch (Exception e) {
-           e.printStackTrace();
-            throw new RuntimeException("Gagal mengubah password. Silakan coba lagi.");
-       }
-   }
-
-    public String getPasswordById(Integer userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPasswordById'");
-    }
-
-    public boolean checkEmailExists(String email) {
-        try (SqlSession session = factory.openSession()) {
-            MapperUser userMapper = session.getMapper(MapperUser.class);
-            return userMapper.checkEmailExists(email);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Gagal memeriksa email. Silakan coba lagi.");
-        }
-    }
-
-    public boolean checkPassword(String plaintextPassword, String hashedPassword) {
-        return BCrypt.checkpw(plaintextPassword, hashedPassword);
-    }
-    
-    public String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
 }
-
