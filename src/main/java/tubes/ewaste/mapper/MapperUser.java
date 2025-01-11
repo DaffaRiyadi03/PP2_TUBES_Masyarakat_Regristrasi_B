@@ -62,6 +62,9 @@ public interface MapperUser {
     @Select("SELECT COUNT(*) > 0 FROM users WHERE email = #{email}")
     boolean checkEmailExists(@Param("email") String email);
 
+    @Update("UPDATE users SET password = #{hashedPassword} WHERE email = #{email}")
+    void updatePasswordByEmail(@Param("email") String email, @Param("hashedPassword") String hashedPassword);
+
    
 
 

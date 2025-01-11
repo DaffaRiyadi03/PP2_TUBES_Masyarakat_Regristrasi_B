@@ -9,13 +9,16 @@ public class MainFrame extends JFrame {
     private HalamanLogin loginPanel;
     private HalamanRegistrasi registerPanel;
     private DashboardAdmin dashboardPanel;
-    private HalamanOtp otpPanel; // Tambahkan variabel OTPPanel
+    private HalamanOtp otpPanel;
+     private HalamanOtpReset otpResetPanel;
     private String emailForVerification;
     private HalamanUtama halamanUtamaPanel;
     private HalamanProfil profilePanel;
-    private Integer currentUserId; // Untuk menyimpan user ID yang login
+    private Integer currentUserId;
     private HalamanUbahPassword halamanUbahPassword;
-
+    private HalamanLupaPassword lupaPasswordPanel;
+    private HalamanResetPassword resetPasswordPanel;
+   
 
     public MainFrame() {
         initComponents();
@@ -30,20 +33,25 @@ public class MainFrame extends JFrame {
         loginPanel = new HalamanLogin(this);
         registerPanel = new HalamanRegistrasi(this);
         dashboardPanel = new DashboardAdmin(this);
-        otpPanel = new HalamanOtp(this); 
+        otpPanel = new HalamanOtp(this);
+         otpResetPanel = new HalamanOtpReset(this);
         halamanUtamaPanel = new HalamanUtama(this);
-        profilePanel = new HalamanProfil(this, currentUserId); // Inisialisasi ProfilePanel
+        profilePanel = new HalamanProfil(this, currentUserId);
         halamanUbahPassword = new HalamanUbahPassword(this);
+         lupaPasswordPanel = new HalamanLupaPassword(this);
+        resetPasswordPanel = new HalamanResetPassword(this);
         
         // Add panels to card layout
         mainPanel.add(loginPanel, "LOGIN");
         mainPanel.add(registerPanel, "REGISTER");
         mainPanel.add(dashboardPanel, "DASHBOARD");
         mainPanel.add(otpPanel, "OTP");
+         mainPanel.add(otpResetPanel, "OTP_RESET");
         mainPanel.add(halamanUtamaPanel, "HALAMAN_UTAMA");
-        mainPanel.add(profilePanel, "PROFILE"); // Tambahkan ProfilePanel ke mainPanel
+        mainPanel.add(profilePanel, "PROFILE");
         mainPanel.add(halamanUbahPassword, "UBAH_PASSWORD");
-    
+         mainPanel.add(lupaPasswordPanel, "LUPA_PASSWORD");
+          mainPanel.add(resetPasswordPanel, "RESET_PASSWORD");
         // Add main panel to frame
         add(mainPanel);
     
@@ -87,6 +95,10 @@ public class MainFrame extends JFrame {
     public void showOTP() {
         cardLayout.show(mainPanel, "OTP"); // Menampilkan OTPPanel
     }
+    
+      public void showOTPReset() {
+        cardLayout.show(mainPanel, "OTP_RESET"); // Menampilkan OTP Reset Panel
+    }
 
     public void setEmailForVerification(String email) {
         this.emailForVerification = email;
@@ -109,4 +121,11 @@ public class MainFrame extends JFrame {
     }
     public void showUbahPassword() { 
         cardLayout.show(mainPanel, "UBAH_PASSWORD"); }
+        
+     public void showLupaPassword() {
+        cardLayout.show(mainPanel, "LUPA_PASSWORD");
+     }
+     public void showResetPassword(){
+        cardLayout.show(mainPanel, "RESET_PASSWORD");
+     }
 }
