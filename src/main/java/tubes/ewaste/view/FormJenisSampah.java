@@ -78,17 +78,26 @@ public class FormJenisSampah extends JDialog {
     
 
     private void saveItemType() {
-        String name = nameField.getText();
-        String description = descriptionField.getText();
+        String name = nameField.getText().trim();
+        String description = descriptionField.getText().trim();
         Kategori selectedCategory = (Kategori) categoryComboBox.getSelectedItem();
-        
+    
+        // Validasi input
         if (name.isEmpty() || description.isEmpty() || selectedCategory == null) {
-            JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!");
+            JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        System.out.println("Selected Category: " + selectedCategory);
-        
+    
+        if (!isValidString(name)) {
+            JOptionPane.showMessageDialog(this, "Nama Jenis Item harus berupa teks yang valid!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+    
+        if (!isValidString(description)) {
+            JOptionPane.showMessageDialog(this, "Deskripsi harus berupa teks yang valid!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+    
         if (itemType == null) {
             JenisSampah newItemType = new JenisSampah();
             newItemType.setName(name);
@@ -101,9 +110,15 @@ public class FormJenisSampah extends JDialog {
             itemType.setCategoryId(selectedCategory.getId());
             itemTypeController.updateItemType(itemType);
         }
-        
+    
         dispose();
     }
+
+    private boolean isValidString(String input) {
+        return input.matches("^[\\p{L}\\p{M}\\p{Zs}\\p{P}]+$"); // Hanya huruf, spasi, tanda baca
+    }
+    
+    
     
     public void setItemType(JenisSampah itemType) {
         this.itemType = itemType;

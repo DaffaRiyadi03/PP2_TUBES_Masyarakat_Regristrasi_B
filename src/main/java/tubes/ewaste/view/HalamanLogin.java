@@ -4,7 +4,6 @@ import tubes.ewaste.controller.ControllerUser;
 import tubes.ewaste.model.User;
 import javax.swing.*;
 import java.awt.*;
-import tubes.ewaste.controller.ControllerUser;
 
 public class HalamanLogin extends JPanel {
     private final MainFrame mainFrame;
@@ -79,20 +78,29 @@ public class HalamanLogin extends JPanel {
     }
 
     private void setupListeners() {
-       loginButton.addActionListener(e -> {
+        loginButton.addActionListener(e -> {
             String email = emailField.getText().trim();
             String password = new String(passwordField.getPassword());
     
-            if (email.isEmpty() || password.isEmpty()) {
+            // Validasi email
+            if (email.isEmpty() || !isValidEmail(email)) {
                 JOptionPane.showMessageDialog(this,
-                        // "Tolong isi semua kolom",
-                        // "Error",
-                        "Email atau Password tidak sesuai,silahkan cek kembali!",
+                        "Format email tidak valid!",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+    
+            // Validasi password
+            if (password.isEmpty() || password.length() < 8) {
+                JOptionPane.showMessageDialog(this,
+                        "Password harus memiliki minimal 8 karakter!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            // Jika validasi lolos, lanjutkan proses login
             try {
                 if (userController.login(email, password)) {
                     User user = userController.findUserByEmail(email);
@@ -102,15 +110,10 @@ public class HalamanLogin extends JPanel {
                         mainFrame.showHalamanUtama(); // Navigasi ke halaman utama
                     } else if (user.getRoleId() == 1) {
                         mainFrame.showDashboard(); // Navigasi ke dashboard untuk akun admin
-                    } else {
-                        // JOptionPane.showMessageDialog(this,
-                        //         "Login berhasil!",
-                        //         "Sukses",
-                        //         JOptionPane.INFORMATION_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(this,
-                            "Email atau Password tidak sesuai,silahkan cek kembali!",
+                            "Email atau Password tidak sesuai, silahkan cek kembali!",
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -118,13 +121,20 @@ public class HalamanLogin extends JPanel {
                 errorLabel.setText("Terjadi kesalahan: " + ex.getMessage());
             }
         });
-
-         registerButton.addActionListener(e -> {
+    
+        registerButton.addActionListener(e -> {
             mainFrame.showRegister();
         });
-
-          forgotPasswordButton.addActionListener(e -> {
+    
+        forgotPasswordButton.addActionListener(e -> {
             mainFrame.showForgotPassword();
         });
     }
+    
+    // Metode validasi email
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        return email.matches(emailRegex);
+    }
+    
 }

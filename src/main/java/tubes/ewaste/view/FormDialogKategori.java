@@ -57,6 +57,32 @@ public class FormDialogKategori extends JDialog {
     }
 
     public void addSaveButtonListener(ActionListener listener) {
-        saveButton.addActionListener(listener);
+        saveButton.addActionListener(e -> {
+            String name = getCategoryName();
+            String description = getCategoryDescription();
+
+            if (name.isEmpty() || description.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Nama kategori dan deskripsi tidak boleh kosong!",
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE
+                );
+            } else if (!isValidString(name) || !isValidString(description)) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Nama kategori dan deskripsi harus berupa teks yang valid!",
+                    "Validasi Gagal",
+                    JOptionPane.WARNING_MESSAGE
+                );
+            } else {
+                listener.actionPerformed(e);
+            }
+        });
     }
+
+    private boolean isValidString(String input) {
+        return input.matches("^[\\p{L}\\p{M}\\p{Zs}\\p{P}]+$"); // Hanya huruf, spasi, tanda baca
+    }
+
 }

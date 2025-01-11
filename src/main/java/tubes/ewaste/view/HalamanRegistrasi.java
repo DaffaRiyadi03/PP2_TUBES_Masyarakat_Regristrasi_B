@@ -116,42 +116,59 @@ public class HalamanRegistrasi extends JPanel {
     }
 
     private boolean validateInput() {
-        if (nameField.getText().isEmpty() || emailField.getText().isEmpty() ||
-                new String(passwordField.getPassword()).isEmpty() ||
-                new String(confirmPasswordField.getPassword()).isEmpty() ||
-                addressArea.getText().isEmpty() || birthDateField.getText().isEmpty()) {
-
-            JOptionPane.showMessageDialog(this,
-                    // "Please fill all fields",
-                    // "Validation Error",
-                    "Data tidak valid,silahkan cek data kembali!",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+        // Validasi nama
+        if (nameField.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
-        if (!new String(passwordField.getPassword()).equals(new String(confirmPasswordField.getPassword()))) {
-            JOptionPane.showMessageDialog(this,
-                    // "Passwords do not match",
-                    // "Validation Error",
-                    "Data tidak valid,silahkan cek data kembali!",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+    
+        if (!nameField.getText().matches("^[A-Za-z\\s'.,]+$")) {
+            JOptionPane.showMessageDialog(this, "Nama hanya boleh mengandung huruf, spasi, tanda baca sederhana", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+    
+        // Validasi email
+        if (!emailField.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            JOptionPane.showMessageDialog(this, "Format email tidak valid", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    
+        // Validasi password
+        String password = new String(passwordField.getPassword());
+        String confirmPassword = new String(confirmPasswordField.getPassword());
+        if (password.length() < 8) {
+            JOptionPane.showMessageDialog(this, "Password harus minimal 8 karakter", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, "Password dan konfirmasi password tidak cocok", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    
+        if (!password.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+            JOptionPane.showMessageDialog(this, "Password harus memiliki huruf besar, huruf kecil, angka, dan simbol", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    
+        // Validasi tanggal lahir
         try {
-            LocalDate.parse(birthDateField.getText());
-        } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this,
-                    // "Invalid date format. Please use YYYY-MM-DD",
-                    // "Validation Error",
-                    "Data tidak valid,silahkan cek data kembali!",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            LocalDate birthDate = LocalDate.parse(birthDateField.getText());
+            if (birthDate.isAfter(LocalDate.now().minusYears(13))) {
+                JOptionPane.showMessageDialog(this, "Pengguna harus berusia minimal 13 tahun", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Format tanggal tidak valid. Gunakan format YYYY-MM-DD", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+    
+        // Validasi alamat
+        if (addressArea.getText().trim().isEmpty() || addressArea.getText().trim().length() < 10) {
+            JOptionPane.showMessageDialog(this, "Alamat tidak boleh kosong dan harus minimal 10 karakter", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    
         return true;
     }
 
@@ -165,12 +182,6 @@ public class HalamanRegistrasi extends JPanel {
             user.setBirthDate(LocalDate.parse(birthDateField.getText()));
     
             userController.register(user);
-    
-            // Tampilkan pesan sukses dan informasikan pengguna untuk cek email
-            // JOptionPane.showMessageDialog(this,
-            // // "Registration successful! Please check your email to verify your account.",
-            // // "Registration Success",
-            // JOptionPane.INFORMATION_MESSAGE);
             
             // Simpan email pengguna untuk digunakan di OTPPanel
             mainFrame.setEmailForVerification(user.getEmail());

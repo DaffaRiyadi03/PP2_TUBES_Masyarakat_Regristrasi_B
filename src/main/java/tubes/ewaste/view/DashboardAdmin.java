@@ -21,13 +21,6 @@ public class DashboardAdmin extends JPanel {
 
     private JTabbedPane tabbedPane;
 
-    // Components for Users Tab
-    private JTable usersTable;
-    private DefaultTableModel userTableModel;
-    private JButton refreshUserButton;
-    private JButton updateUserButton;
-    private JButton deleteUserButton;
-
     // Components for Categories Tab
     private JTable categoriesTable;
     private DefaultTableModel categoryTableModel;
@@ -62,13 +55,6 @@ public class DashboardAdmin extends JPanel {
     private void initComponents() {
         tabbedPane = new JTabbedPane();
 
-        // Users Tab
-        userTableModel = new DefaultTableModel(new String[]{"ID", "Nama", "Email", "Alamat", "Tanggal Lahir", "Foto"}, 0);
-        usersTable = new JTable(userTableModel);
-        refreshUserButton = new JButton("Refresh Akun");
-        updateUserButton = new JButton("Rubah Akun");
-        deleteUserButton = new JButton("Hapus Akun");
-
         // Categories Tab
         categoryTableModel = new DefaultTableModel(new String[]{"ID", "Nama Kategori", "Deskripsi"}, 0);
         categoriesTable = new JTable(categoryTableModel);
@@ -91,12 +77,6 @@ public class DashboardAdmin extends JPanel {
 
     private void setupLayout() {
         setLayout(new BorderLayout());
-
-        // Users Tab Layout
-        JPanel userPanel = new JPanel(new BorderLayout());
-        userPanel.add(new JScrollPane(usersTable), BorderLayout.CENTER);
-        userPanel.add(createButtonPanel(refreshUserButton, updateUserButton, deleteUserButton), BorderLayout.SOUTH);
-        tabbedPane.addTab("Kelola Akun", userPanel);
 
         // Categories Tab Layout
         JPanel categoryPanel = new JPanel(new BorderLayout());
@@ -160,10 +140,6 @@ public class DashboardAdmin extends JPanel {
     
 
     private void setupListeners() {
-        // User Tab Listeners
-        refreshUserButton.addActionListener(e -> loadUsers());
-        updateUserButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Fitur Rubah Akun Belum Diimplementasikan"));
-        deleteUserButton.addActionListener(e -> deleteUser());
 
         // Category Tab Listeners
         addCategoryButton.addActionListener(e -> {
@@ -318,32 +294,6 @@ public class DashboardAdmin extends JPanel {
 
         // Logout Listener
         logoutButton.addActionListener(e -> mainFrame.showLogin());
-    }
-
-    public void loadUsers() {
-        userTableModel.setRowCount(0);
-        List<User> users = userController.getAllUsers();
-        for (User user : users) {
-            userTableModel.addRow(new Object[]{
-                    user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getAddress(),
-                    user.getBirthDate(),
-                    user.getPhotoPath()
-            });
-        }
-    }
-
-    private void deleteUser() {
-        int selectedRow = usersTable.getSelectedRow();
-        if (selectedRow != -1) {
-            int userId = (int) userTableModel.getValueAt(selectedRow, 0);
-            userController.deleteUser(userId);
-            loadUsers();
-        } else {
-            JOptionPane.showMessageDialog(this, "Silahkan pilih akun yang ingin dihapus!");
-        }
     }
 
     private void deleteCategory() {
