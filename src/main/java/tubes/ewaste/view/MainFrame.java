@@ -71,11 +71,9 @@ public class MainFrame extends JFrame {
     }
 
     public void showDashboard() {
-        dashboardPanel.loadUsers(); // Load users data when showing dashboard
         cardLayout.show(mainPanel, "DASHBOARD");
     }
     
-
     public void setEmailForVerification(String email) {
         this.emailForVerification = email;
     }

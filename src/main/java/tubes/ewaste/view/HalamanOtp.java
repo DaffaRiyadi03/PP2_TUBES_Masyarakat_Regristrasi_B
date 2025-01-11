@@ -3,7 +3,6 @@ package tubes.ewaste.view;
 import tubes.ewaste.controller.ControllerUser;
 import javax.swing.*;
 import java.awt.*;
-import tubes.ewaste.controller.ControllerUser;
 
 public class HalamanOtp extends JPanel {
     private final MainFrame mainFrame;
